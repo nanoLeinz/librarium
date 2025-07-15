@@ -11,10 +11,10 @@ type Book struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Title           string
 	ISBN            string
-	PublicationYear time.Time
+	PublicationYear int
 	Genre           string
 	Author          []Author `gorm:"many2many:author_books;"`
-	Book            []BookCopy
+	BookCopy        []BookCopy
 	Reservation     []Reservation
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
