@@ -1,8 +1,8 @@
 package dto
 
 type MemberCreateRequest struct {
-	Email         string `validate:"required,email"`
-	Password      string `validate:"required"`
-	FullName      string `validate:"required"`
-	AccountStatus string `validate:"required"`
+	Email         string `json:"email" validate:"required,email"`
+	Password      string `json:"password" validate:"required"`
+	FullName      string `json:"fullname" validate:"required"`
+	AccountStatus string `json:"account_status"`
 }

@@ -8,11 +8,11 @@ import (
 )
 
 type MemberResponse struct {
-	ID            uuid.UUID
-	Email         string
-	FullName      string
-	AccountStatus string
-	CreatedAt     time.Time
+	ID            uuid.UUID `json:"id"`
+	Email         string    `json:"email"`
+	FullName      string    `json:"full_name"`
+	AccountStatus string    `json:"account_status"`
+	CreatedAt     time.Time `json:"created_at"`
 }
 
 func ToMemberResponse(member model.Member) MemberResponse {

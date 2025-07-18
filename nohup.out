@@ -1,0 +1,99 @@
+2025/07/17 15:49:59.654384 NewMemberRepository: initializing repository
+2025/07/17 15:49:59.654655 NewMemberServiceImpl: initializing service
+2025/07/17 15:49:59.655253 Server Started at port :8890
+2025/07/17 15:50:13.410508 CreateMember: received request
+2025/07/17 15:50:13.410685 CreateMember: request decoded: {Email:Monroe.Thiel@yahoo.com Password:welcome1 FullName:Bryan Murphy AccountStatus:}
+2025/07/17 15:50:13.410731 CreateMember: set AccountStatus to ACTIVE
+2025/07/17 15:50:13.410955 CreateMember: validation passed
+2025/07/17 15:50:13.410972 CreateMember: received data: &{Email:Monroe.Thiel@yahoo.com Password:welcome1 FullName:Bryan Murphy AccountStatus:ACTIVE}
+2025/07/17 15:50:13.666054 CreateMember: password hashed successfully
+2025/07/17 15:50:13.666113 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Monroe.Thiel@yahoo.com Password:$2a$10$Vc.szhCtRBZuGfRkXbaPMud8jJ2odZC/3dQosk/j0gy.V5yEXcHFu FullName:Bryan Murphy Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/17 15:50:13.666327 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Monroe.Thiel@yahoo.com Password:$2a$10$Vc.szhCtRBZuGfRkXbaPMud8jJ2odZC/3dQosk/j0gy.V5yEXcHFu FullName:Bryan Murphy Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/17 15:50:13.675108 Create: member created successfully: &{ID:877aac34-116b-4d9b-85f8-9b5aa363eb6c Email:Monroe.Thiel@yahoo.com Password:$2a$10$Vc.szhCtRBZuGfRkXbaPMud8jJ2odZC/3dQosk/j0gy.V5yEXcHFu FullName:Bryan Murphy Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-17 15:50:13.668126155 +0700 WIB UpdatedAt:2025-07-17 15:50:13.668126155 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/17 15:50:13.675254 CreateMember: member created in repository: &{ID:877aac34-116b-4d9b-85f8-9b5aa363eb6c Email:Monroe.Thiel@yahoo.com Password:$2a$10$Vc.szhCtRBZuGfRkXbaPMud8jJ2odZC/3dQosk/j0gy.V5yEXcHFu FullName:Bryan Murphy Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-17 15:50:13.668126155 +0700 WIB UpdatedAt:2025-07-17 15:50:13.668126155 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/17 15:50:13.675317 CreateMember: converted to response DTO: {ID:877aac34-116b-4d9b-85f8-9b5aa363eb6c Email:Monroe.Thiel@yahoo.com FullName:Bryan Murphy AccountStatus:ACTIVE CreatedAt:2025-07-17 15:50:13.668126155 +0700 WIB}
+2025/07/17 15:50:13.675368 CreateMember: member created: &{ID:877aac34-116b-4d9b-85f8-9b5aa363eb6c Email:Monroe.Thiel@yahoo.com FullName:Bryan Murphy AccountStatus:ACTIVE CreatedAt:2025-07-17 15:50:13.668126155 +0700 WIB}
+2025/07/17 15:50:13.675654 CreateMember: response sent successfully
+2025/07/19 05:38:55.785883 CreateMember: received request
+2025/07/19 05:38:55.791434 CreateMember: request decoded: {Email:Maurine36@hotmail.com Password:welcome1 FullName:Clint Gusikowski AccountStatus:}
+2025/07/19 05:38:55.792819 CreateMember: set AccountStatus to ACTIVE
+2025/07/19 05:38:55.797631 CreateMember: validation passed
+2025/07/19 05:38:55.797740 CreateMember: received data: &{Email:Maurine36@hotmail.com Password:welcome1 FullName:Clint Gusikowski AccountStatus:ACTIVE}
+2025/07/19 05:38:56.107746 CreateMember: password hashed successfully
+2025/07/19 05:38:56.107844 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Maurine36@hotmail.com Password:$2a$10$2KuFn2ozbcWqFoxP94ZCO.LxLMR4mfl.QNaMpyjmhETmG9q.S3mCa FullName:Clint Gusikowski Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:38:56.108920 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Maurine36@hotmail.com Password:$2a$10$2KuFn2ozbcWqFoxP94ZCO.LxLMR4mfl.QNaMpyjmhETmG9q.S3mCa FullName:Clint Gusikowski Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:38:56.145765 Create: member created successfully: &{ID:9e2bda5b-c667-423e-913a-a4c804ecacd4 Email:Maurine36@hotmail.com Password:$2a$10$2KuFn2ozbcWqFoxP94ZCO.LxLMR4mfl.QNaMpyjmhETmG9q.S3mCa FullName:Clint Gusikowski Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:38:56.122057001 +0700 WIB UpdatedAt:2025-07-19 05:38:56.122057001 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:38:56.146404 CreateMember: member created in repository: &{ID:9e2bda5b-c667-423e-913a-a4c804ecacd4 Email:Maurine36@hotmail.com Password:$2a$10$2KuFn2ozbcWqFoxP94ZCO.LxLMR4mfl.QNaMpyjmhETmG9q.S3mCa FullName:Clint Gusikowski Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:38:56.122057001 +0700 WIB UpdatedAt:2025-07-19 05:38:56.122057001 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:38:56.146486 CreateMember: converted to response DTO: {ID:9e2bda5b-c667-423e-913a-a4c804ecacd4 Email:Maurine36@hotmail.com FullName:Clint Gusikowski AccountStatus:ACTIVE CreatedAt:2025-07-19 05:38:56.122057001 +0700 WIB}
+2025/07/19 05:38:56.146512 CreateMember: member created: &{ID:9e2bda5b-c667-423e-913a-a4c804ecacd4 Email:Maurine36@hotmail.com FullName:Clint Gusikowski AccountStatus:ACTIVE CreatedAt:2025-07-19 05:38:56.122057001 +0700 WIB}
+2025/07/19 05:38:56.147951 CreateMember: response sent successfully
+2025/07/19 05:42:57.122082 CreateMember: received request
+2025/07/19 05:42:57.123044 CreateMember: request decoded: {Email:Alena.Larson-Spinka@gmail.comsd Password:welcome1 FullName:Miss Kristi Stroman DDS AccountStatus:}
+2025/07/19 05:42:57.123178 CreateMember: set AccountStatus to ACTIVE
+2025/07/19 05:42:57.124569 CreateMember: validation passed
+2025/07/19 05:42:57.124749 CreateMember: received data: &{Email:Alena.Larson-Spinka@gmail.comsd Password:welcome1 FullName:Miss Kristi Stroman DDS AccountStatus:ACTIVE}
+2025/07/19 05:42:57.425149 CreateMember: password hashed successfully
+2025/07/19 05:42:57.425335 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Alena.Larson-Spinka@gmail.comsd Password:$2a$10$.jWgaBJyTofwndc0.3wbfOkEUNJkshYtXk1XsxJc9TaZNJKb4N2hW FullName:Miss Kristi Stroman DDS Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:42:57.425439 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Alena.Larson-Spinka@gmail.comsd Password:$2a$10$.jWgaBJyTofwndc0.3wbfOkEUNJkshYtXk1XsxJc9TaZNJKb4N2hW FullName:Miss Kristi Stroman DDS Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:42:57.433659 Create: member created successfully: &{ID:a07ef777-ab18-4131-9e76-87a357f78b79 Email:Alena.Larson-Spinka@gmail.comsd Password:$2a$10$.jWgaBJyTofwndc0.3wbfOkEUNJkshYtXk1XsxJc9TaZNJKb4N2hW FullName:Miss Kristi Stroman DDS Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:42:57.426903924 +0700 WIB UpdatedAt:2025-07-19 05:42:57.426903924 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:42:57.433868 CreateMember: member created in repository: &{ID:a07ef777-ab18-4131-9e76-87a357f78b79 Email:Alena.Larson-Spinka@gmail.comsd Password:$2a$10$.jWgaBJyTofwndc0.3wbfOkEUNJkshYtXk1XsxJc9TaZNJKb4N2hW FullName:Miss Kristi Stroman DDS Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:42:57.426903924 +0700 WIB UpdatedAt:2025-07-19 05:42:57.426903924 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:42:57.433984 CreateMember: converted to response DTO: {ID:a07ef777-ab18-4131-9e76-87a357f78b79 Email:Alena.Larson-Spinka@gmail.comsd FullName:Miss Kristi Stroman DDS AccountStatus:ACTIVE CreatedAt:2025-07-19 05:42:57.426903924 +0700 WIB}
+2025/07/19 05:42:57.434022 CreateMember: member created: &{ID:a07ef777-ab18-4131-9e76-87a357f78b79 Email:Alena.Larson-Spinka@gmail.comsd FullName:Miss Kristi Stroman DDS AccountStatus:ACTIVE CreatedAt:2025-07-19 05:42:57.426903924 +0700 WIB}
+2025/07/19 05:42:57.434133 CreateMember: response sent successfully
+2025/07/19 05:43:20.906046 CreateMember: received request
+2025/07/19 05:43:20.906239 CreateMember: request decoded: {Email:Aric.Ankunding@hotmail.com Password:welcome1 FullName:Drew Schuppe AccountStatus:}
+2025/07/19 05:43:20.906287 CreateMember: set AccountStatus to ACTIVE
+2025/07/19 05:43:20.906365 CreateMember: validation passed
+2025/07/19 05:43:20.906384 CreateMember: received data: &{Email:Aric.Ankunding@hotmail.com Password:welcome1 FullName:Drew Schuppe AccountStatus:ACTIVE}
+2025/07/19 05:43:21.208321 CreateMember: password hashed successfully
+2025/07/19 05:43:21.208417 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Aric.Ankunding@hotmail.com Password:$2a$10$xLyngJf67z716NczQGn.mOrYCYfsDK7vAxOdyOhYAEG25NPFvCJtu FullName:Drew Schuppe Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:43:21.208516 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Aric.Ankunding@hotmail.com Password:$2a$10$xLyngJf67z716NczQGn.mOrYCYfsDK7vAxOdyOhYAEG25NPFvCJtu FullName:Drew Schuppe Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:43:21.217696 Create: member created successfully: &{ID:1177e55e-c685-4085-8558-c981d35505b2 Email:Aric.Ankunding@hotmail.com Password:$2a$10$xLyngJf67z716NczQGn.mOrYCYfsDK7vAxOdyOhYAEG25NPFvCJtu FullName:Drew Schuppe Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:43:21.209945695 +0700 WIB UpdatedAt:2025-07-19 05:43:21.209945695 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:43:21.218269 CreateMember: member created in repository: &{ID:1177e55e-c685-4085-8558-c981d35505b2 Email:Aric.Ankunding@hotmail.com Password:$2a$10$xLyngJf67z716NczQGn.mOrYCYfsDK7vAxOdyOhYAEG25NPFvCJtu FullName:Drew Schuppe Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 05:43:21.209945695 +0700 WIB UpdatedAt:2025-07-19 05:43:21.209945695 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 05:43:21.218382 CreateMember: converted to response DTO: {ID:1177e55e-c685-4085-8558-c981d35505b2 Email:Aric.Ankunding@hotmail.com FullName:Drew Schuppe AccountStatus:ACTIVE CreatedAt:2025-07-19 05:43:21.209945695 +0700 WIB}
+2025/07/19 05:43:21.218427 CreateMember: member created: &{ID:1177e55e-c685-4085-8558-c981d35505b2 Email:Aric.Ankunding@hotmail.com FullName:Drew Schuppe AccountStatus:ACTIVE CreatedAt:2025-07-19 05:43:21.209945695 +0700 WIB}
+2025/07/19 05:43:21.218618 CreateMember: response sent successfully
+2025/07/19 06:01:13.828261 NewMemberRepository: initializing repository
+2025/07/19 06:01:13.828430 NewMemberServiceImpl: initializing service
+2025/07/19 06:01:13.828748 Server Started at port :8890
+panic: cant start server listen tcp :8890: bind: address already in use
+
+goroutine 1 [running]:
+main.main()
+	/home/nano/Project/Go/librarium/main.go:70 +0x73c
+exit status 2
+2025/07/19 06:02:01.127912 NewMemberRepository: initializing repository
+2025/07/19 06:02:01.128056 NewMemberServiceImpl: initializing service
+2025/07/19 06:02:01.128489 Server Started at port :8890
+panic: cant start server listen tcp :8890: bind: address already in use
+
+goroutine 1 [running]:
+main.main()
+	/home/nano/Project/Go/librarium/main.go:70 +0x73c
+exit status 2
+2025/07/19 06:02:12.963165 CreateMember: received request
+2025/07/19 06:02:12.963547 CreateMember: request decoded: {Email:Cristobal_Fisher@gmail.com Password:welcome1 FullName:Cristina Bailey-Fay AccountStatus:}
+2025/07/19 06:02:12.963595 CreateMember: set AccountStatus to ACTIVE
+2025/07/19 06:02:12.963670 CreateMember: validation passed
+2025/07/19 06:02:12.963684 CreateMember: received data: &{Email:Cristobal_Fisher@gmail.com Password:welcome1 FullName:Cristina Bailey-Fay AccountStatus:ACTIVE}
+2025/07/19 06:02:13.328866 CreateMember: password hashed successfully
+2025/07/19 06:02:13.328988 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Cristobal_Fisher@gmail.com Password:$2a$10$f1JVEiqNjOBeDwxax2I5fuPczhGPcsOPundiJnfjHVV09PEJ/NlyS FullName:Cristina Bailey-Fay Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:13.329132 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Cristobal_Fisher@gmail.com Password:$2a$10$f1JVEiqNjOBeDwxax2I5fuPczhGPcsOPundiJnfjHVV09PEJ/NlyS FullName:Cristina Bailey-Fay Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:13.338019 Create: member created successfully: &{ID:668e5e11-09e2-4acd-b866-374983e7e5fb Email:Cristobal_Fisher@gmail.com Password:$2a$10$f1JVEiqNjOBeDwxax2I5fuPczhGPcsOPundiJnfjHVV09PEJ/NlyS FullName:Cristina Bailey-Fay Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 06:02:13.330761284 +0700 WIB UpdatedAt:2025-07-19 06:02:13.330761284 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:13.338324 CreateMember: member created in repository: &{ID:668e5e11-09e2-4acd-b866-374983e7e5fb Email:Cristobal_Fisher@gmail.com Password:$2a$10$f1JVEiqNjOBeDwxax2I5fuPczhGPcsOPundiJnfjHVV09PEJ/NlyS FullName:Cristina Bailey-Fay Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 06:02:13.330761284 +0700 WIB UpdatedAt:2025-07-19 06:02:13.330761284 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:13.338418 CreateMember: converted to response DTO: {ID:668e5e11-09e2-4acd-b866-374983e7e5fb Email:Cristobal_Fisher@gmail.com FullName:Cristina Bailey-Fay AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:13.330761284 +0700 WIB}
+2025/07/19 06:02:13.338466 CreateMember: member created: &{ID:668e5e11-09e2-4acd-b866-374983e7e5fb Email:Cristobal_Fisher@gmail.com FullName:Cristina Bailey-Fay AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:13.330761284 +0700 WIB}
+2025/07/19 06:02:13.338665 CreateMember: response sent successfully
+2025/07/19 06:02:16.657400 CreateMember: received request
+2025/07/19 06:02:16.657547 CreateMember: request decoded: {Email:Jed.Armstrong25@gmail.com Password:welcome1 FullName:Clayton Terry AccountStatus:}
+2025/07/19 06:02:16.657617 CreateMember: set AccountStatus to ACTIVE
+2025/07/19 06:02:16.657736 CreateMember: validation passed
+2025/07/19 06:02:16.657772 CreateMember: received data: &{Email:Jed.Armstrong25@gmail.com Password:welcome1 FullName:Clayton Terry AccountStatus:ACTIVE}
+2025/07/19 06:02:17.035322 CreateMember: password hashed successfully
+2025/07/19 06:02:17.035523 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Jed.Armstrong25@gmail.com Password:$2a$10$ncSbCM9UGdS3cGWJvSS3c.wAg/Xknj3gMbO7njzKwyFat8jCmACVG FullName:Clayton Terry Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:17.036119 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Jed.Armstrong25@gmail.com Password:$2a$10$ncSbCM9UGdS3cGWJvSS3c.wAg/Xknj3gMbO7njzKwyFat8jCmACVG FullName:Clayton Terry Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:17.041174 Create: member created successfully: &{ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com Password:$2a$10$ncSbCM9UGdS3cGWJvSS3c.wAg/Xknj3gMbO7njzKwyFat8jCmACVG FullName:Clayton Terry Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB UpdatedAt:2025-07-19 06:02:17.037370187 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:17.041763 CreateMember: member created in repository: &{ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com Password:$2a$10$ncSbCM9UGdS3cGWJvSS3c.wAg/Xknj3gMbO7njzKwyFat8jCmACVG FullName:Clayton Terry Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB UpdatedAt:2025-07-19 06:02:17.037370187 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/19 06:02:17.041818 CreateMember: converted to response DTO: {ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com FullName:Clayton Terry AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB}
+2025/07/19 06:02:17.041846 CreateMember: member created: &{ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com FullName:Clayton Terry AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB}
+2025/07/19 06:02:17.042532 CreateMember: response sent successfully
