@@ -35,7 +35,7 @@ func (s MemberController) CreateMember(w http.ResponseWriter, r *http.Request) {
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
-			Data:   nil,
+			Result: nil,
 		}
 
 		helper.ResponseJSON(w, http.StatusBadRequest, response)
@@ -48,6 +48,9 @@ func (s MemberController) CreateMember(w http.ResponseWriter, r *http.Request) {
 	req.AccountStatus = "ACTIVE"
 	log.Println("CreateMember: set AccountStatus to ACTIVE") // Logging
 
+	req.Role = "member"
+	log.Println("CreateMember: set Role to Member")
+
 	err := s.validator.Struct(&req)
 
 	if err != nil {
@@ -55,7 +58,7 @@ func (s MemberController) CreateMember(w http.ResponseWriter, r *http.Request) {
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
-			Data:   nil,
+			Result: nil,
 		}
 
 		helper.ResponseJSON(w, http.StatusBadRequest, response)
@@ -72,7 +75,7 @@ func (s MemberController) CreateMember(w http.ResponseWriter, r *http.Request) {
 		response := dto.WebResponse{
 			Code:   http.StatusInternalServerError,
 			Status: err.Error(),
-			Data:   nil,
+			Result: nil,
 		}
 
 		helper.ResponseJSON(w, http.StatusInternalServerError, response)
@@ -85,7 +88,7 @@ func (s MemberController) CreateMember(w http.ResponseWriter, r *http.Request) {
 	response := dto.WebResponse{
 		Code:   http.StatusOK,
 		Status: "success",
-		Data:   *member,
+		Result: *member,
 	}
 
 	helper.ResponseJSON(w, http.StatusOK, response)

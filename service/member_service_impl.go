@@ -56,6 +56,7 @@ func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCre
 		Password:      hashedpass,
 		FullName:      data.FullName,
 		AccountStatus: data.AccountStatus,
+		Role:          data.Role,
 	}
 	log.Printf("CreateMember: member model prepared: %+v", user) // Logging
 

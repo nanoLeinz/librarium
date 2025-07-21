@@ -5,4 +5,5 @@ type MemberCreateRequest struct {
 	Password      string `json:"password" validate:"required"`
 	FullName      string `json:"fullname" validate:"required"`
 	AccountStatus string `json:"account_status"`
+	Role          string `json:"-"`
 }

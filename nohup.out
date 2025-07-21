@@ -97,3 +97,16 @@ exit status 2
 2025/07/19 06:02:17.041818 CreateMember: converted to response DTO: {ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com FullName:Clayton Terry AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB}
 2025/07/19 06:02:17.041846 CreateMember: member created: &{ID:43cb13a6-cc9b-4f82-bda6-186c5d0c023a Email:Jed.Armstrong25@gmail.com FullName:Clayton Terry AccountStatus:ACTIVE CreatedAt:2025-07-19 06:02:17.037370187 +0700 WIB}
 2025/07/19 06:02:17.042532 CreateMember: response sent successfully
+2025/07/21 13:21:49.839580 CreateMember: received request
+2025/07/21 13:21:49.840167 CreateMember: request decoded: {Email:Stan46@hotmail.com Password:welcome1 FullName:Taylor Okuneva AccountStatus:}
+2025/07/21 13:21:49.840251 CreateMember: set AccountStatus to ACTIVE
+2025/07/21 13:21:49.840388 CreateMember: validation passed
+2025/07/21 13:21:49.840404 CreateMember: received data: &{Email:Stan46@hotmail.com Password:welcome1 FullName:Taylor Okuneva AccountStatus:ACTIVE}
+2025/07/21 13:21:49.916691 CreateMember: password hashed successfully
+2025/07/21 13:21:49.916754 CreateMember: member model prepared: {ID:00000000-0000-0000-0000-000000000000 Email:Stan46@hotmail.com Password:$2a$10$eBL3IKTISGnqQF6UZmEP0eaNXEclQi5djP/ycEqXzNMhqchOFhzEW FullName:Taylor Okuneva Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/21 13:21:49.917073 Create: creating member with data: &{ID:00000000-0000-0000-0000-000000000000 Email:Stan46@hotmail.com Password:$2a$10$eBL3IKTISGnqQF6UZmEP0eaNXEclQi5djP/ycEqXzNMhqchOFhzEW FullName:Taylor Okuneva Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:0001-01-01 00:00:00 +0000 UTC UpdatedAt:0001-01-01 00:00:00 +0000 UTC DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/21 13:21:49.920499 Create: member created successfully: &{ID:9bde498b-b588-48f6-a4ef-8f0e6c84178e Email:Stan46@hotmail.com Password:$2a$10$eBL3IKTISGnqQF6UZmEP0eaNXEclQi5djP/ycEqXzNMhqchOFhzEW FullName:Taylor Okuneva Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-21 13:21:49.917689208 +0700 WIB UpdatedAt:2025-07-21 13:21:49.917689208 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/21 13:21:49.920591 CreateMember: member created in repository: &{ID:9bde498b-b588-48f6-a4ef-8f0e6c84178e Email:Stan46@hotmail.com Password:$2a$10$eBL3IKTISGnqQF6UZmEP0eaNXEclQi5djP/ycEqXzNMhqchOFhzEW FullName:Taylor Okuneva Role: AccountStatus:ACTIVE Loan:[] Fine:[] Reservation:[] CreatedAt:2025-07-21 13:21:49.917689208 +0700 WIB UpdatedAt:2025-07-21 13:21:49.917689208 +0700 WIB DeletedAt:{Time:0001-01-01 00:00:00 +0000 UTC Valid:false}}
+2025/07/21 13:21:49.920611 CreateMember: converted to response DTO: {ID:9bde498b-b588-48f6-a4ef-8f0e6c84178e Email:Stan46@hotmail.com FullName:Taylor Okuneva AccountStatus:ACTIVE CreatedAt:2025-07-21 13:21:49.917689208 +0700 WIB}
+2025/07/21 13:21:49.920849 CreateMember: member created: &{ID:9bde498b-b588-48f6-a4ef-8f0e6c84178e Email:Stan46@hotmail.com FullName:Taylor Okuneva AccountStatus:ACTIVE CreatedAt:2025-07-21 13:21:49.917689208 +0700 WIB}
+2025/07/21 13:21:49.920938 CreateMember: response sent successfully
