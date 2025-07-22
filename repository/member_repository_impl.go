@@ -63,10 +63,26 @@ func (s *MemberRepositoryImpl) GetByID(ctx context.Context, id uuid.UUID) (*mode
 	return data, nil
 }
 
+func (s *MemberRepositoryImpl) GetByEmail(ctx context.Context, email string) (*model.Member, error) {
+	log.Printf("GetByEmail: fetching member with email: %s", email) // Logging
+
+	data := &model.Member{}
+
+	result := s.db.WithContext(ctx).Where("email = ?", email).First(data)
+
+	if result.Error != nil {
+		log.Printf("GetByEmail: failed to fetch member: %v", result.Error) // Logging
+		return nil, result.Error
+	}
+
+	log.Printf("GetByEmail: member fetched successfully: %+v", data) // Logging
+	return data, nil
+}
+
 func (s *MemberRepositoryImpl) GetAll(ctx context.Context) (*[]model.Member, error) {
 	log.Println("GetAll: fetching all members") // Logging
 
-	var data []model.Member
+	data := []model.Member{}
 
 	result := s.db.WithContext(ctx).Find(&data)
 

@@ -12,5 +12,6 @@ type MemberService interface {
 	CreateMember(ctx context.Context, data *dto.MemberCreateRequest) (*dto.MemberResponse, error)
 	UpdateMember(ctx context.Context, data *dto.MemberUpdateRequest) error
 	GetMemberByID(ctx context.Context, id uuid.UUID) (*dto.MemberResponse, error)
+	GetMemberByEmail(ctx context.Context, email string) (*dto.MemberResponse, error)
 	DeleteMemberByID(ctx context.Context, id uuid.UUID) error
 }

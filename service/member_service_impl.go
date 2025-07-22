@@ -104,6 +104,21 @@ func (s MemberServiceImpl) GetMemberByID(ctx context.Context, id uuid.UUID) (*dt
 	return &result, nil
 }
 
+func (s MemberServiceImpl) GetMemberByEmail(ctx context.Context, email string) (*dto.MemberResponse, error) {
+	log.Printf("GetMemberByEmail: fetching member with email: %s", email) // Logging
+
+	data, err := s.repo.GetByEmail(ctx, email)
+	if err != nil {
+		log.Printf("GetMemberByEmail: failed to get member: %v", err) // Logging
+		return nil, fmt.Errorf("failed to get record %w", err)
+	}
+
+	result := dto.ToMemberResponse(*data)
+	log.Printf("GetMemberByEmail: converted to response DTO: %+v", result) // Logging
+
+	return &result, nil
+}
+
 func (s MemberServiceImpl) DeleteMemberByID(ctx context.Context, id uuid.UUID) error {
 	log.Printf("DeleteMemberByID: deleting member with ID: %s", id) // Logging
 

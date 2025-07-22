@@ -6,12 +6,17 @@ import (
 	"github.com/nanoLeinz/librarium/controller"
 )
 
-func NewRouter(member *controller.MemberController) *http.ServeMux {
+func NewRouter(member *controller.MemberController, auth *controller.AuthController) *http.ServeMux {
 
-	route := http.NewServeMux()
+	subroute := http.NewServeMux()
 
-	route.HandleFunc("POST /api/v1/members", member.CreateMember)
+	subroute.HandleFunc("POST /members", auth.Register)
+	subroute.HandleFunc("POST /login", auth.Login)
 
-	return route
+	//v1 api
+	mainroute := http.NewServeMux()
+	mainroute.Handle("/api/v1/", http.StripPrefix("/api/v1", subroute))
+
+	return mainroute
 
 }

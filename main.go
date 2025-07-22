@@ -16,6 +16,7 @@ import (
 	"github.com/nanoLeinz/librarium/service"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func init() {
@@ -30,7 +31,19 @@ func main() {
 		log.Println(err.Error())
 	}
 
-	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{})
+	newLogger := logger.New(
+		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+		logger.Config{
+			SlowThreshold:             time.Second,   // Slow SQL threshold
+			LogLevel:                  logger.Silent, // Log level
+			IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
+			ParameterizedQueries:      true,          // Don't include params in the SQL log
+			Colorful:                  true,          // Disable color
+		},
+	)
+	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{
+		Logger: newLogger,
+	})
 	if err != nil {
 		panic("error")
 
@@ -51,8 +64,9 @@ func main() {
 	validate := validator.New()
 
 	MemberHandler := controller.NewMemberController(MemberServ, validate)
+	AuthHandler := controller.NewAuthController(MemberServ, validate)
 
-	router := router.NewRouter(MemberHandler)
+	router := router.NewRouter(MemberHandler, AuthHandler)
 
 	server := http.Server{
 		Addr:         ":8890",
