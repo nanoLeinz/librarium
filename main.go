@@ -2,69 +2,50 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 	"github.com/nanoLeinz/librarium/controller"
-	"github.com/nanoLeinz/librarium/model"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/repository"
 	"github.com/nanoLeinz/librarium/router"
 	"github.com/nanoLeinz/librarium/service"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 )
 
 func init() {
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	log.SetOutput(os.Stdout)
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05.000",
+	})
+	log.SetLevel(log.TraceLevel)
+	// log.SetReportCaller(true)
 }
 
 func main() {
-
+	log.Info("App Starting")
 	err := godotenv.Load()
 
 	if err != nil {
-		log.Println(err.Error())
+		log.WithError(err).Error("failed loading env")
 	}
 
-	newLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold:             time.Second,   // Slow SQL threshold
-			LogLevel:                  logger.Silent, // Log level
-			IgnoreRecordNotFoundError: true,          // Ignore ErrRecordNotFound error for logger
-			ParameterizedQueries:      true,          // Don't include params in the SQL log
-			Colorful:                  true,          // Disable color
-		},
-	)
-	db, err := gorm.Open(postgres.Open(os.Getenv("DSN")), &gorm.Config{
-		Logger: newLogger,
-	})
-	if err != nil {
-		panic("error")
+	db := helper.InitDatabase()
+	helper.AutoMigrateModels(db)
 
-	}
+	MemberRepo := repository.NewMemberRepository(db, log.StandardLogger())
 
-	db.AutoMigrate(&model.Author{})
-	db.AutoMigrate(&model.Loan{})
-	db.AutoMigrate(&model.BookCopy{})
-	db.AutoMigrate(&model.Book{})
-	db.AutoMigrate(&model.Fine{})
-	db.AutoMigrate(&model.Member{})
-	db.AutoMigrate(&model.Reservation{})
-
-	MemberRepo := repository.NewMemberRepository(db)
-
-	MemberServ := service.NewMemberServiceImpl(MemberRepo)
+	MemberServ := service.NewMemberServiceImpl(MemberRepo, log.StandardLogger())
 
 	validate := validator.New()
 
 	MemberHandler := controller.NewMemberController(MemberServ, validate)
-	AuthHandler := controller.NewAuthController(MemberServ, validate)
+	AuthHandler := controller.NewAuthController(MemberServ, validate, log.StandardLogger())
 
 	router := router.NewRouter(MemberHandler, AuthHandler)
 
@@ -75,12 +56,12 @@ func main() {
 		WriteTimeout: time.Second * 30,
 	}
 
-	log.Printf("Server Started at port %+v\n", ":8890")
+	log.Infof("Server Started at port %+v\n", ":8890")
 
 	err = server.ListenAndServe()
 
 	if err != nil {
-		wrapper := fmt.Errorf("cant start server %w", err)
+		wrapper := fmt.Errorf("cant start server : %w", err)
 		panic(wrapper)
 	}
 

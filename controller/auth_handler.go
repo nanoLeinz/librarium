@@ -2,190 +2,184 @@ package controller
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/service"
+	"github.com/sirupsen/logrus"
 )
 
 type AuthController struct {
 	MemberService service.MemberService
 	validator     *validator.Validate
+	log           *logrus.Logger
 }
 
-func NewAuthController(service service.MemberService, validator *validator.Validate) *AuthController {
+func NewAuthController(service service.MemberService, validator *validator.Validate, log *logrus.Logger) *AuthController {
 	return &AuthController{
 		MemberService: service,
 		validator:     validator,
+		log:           log,
 	}
 }
 
 func (s *AuthController) Register(w http.ResponseWriter, r *http.Request) {
-
-	log.Println("CreateMember: received request") // Logging
+	s.log.WithField("function", "Register").Info("Received registration request")
 
 	var req dto.MemberCreateRequest
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&req); err != nil {
-		log.Printf("CreateMember: failed to decode request body: %v", err) // Logging
+		s.log.WithField("function", "Register").WithError(err).Warn("Failed to decode request body")
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
 		return
 	}
-
-	log.Printf("CreateMember: request decoded: %+v", req) // Logging
+	s.log.WithField("function", "Register").Info("Request body decoded")
 
 	req.AccountStatus = "ACTIVE"
-	log.Println("CreateMember: set AccountStatus to ACTIVE") // Logging
-
 	req.Role = "member"
-	log.Println("CreateMember: set Role to Member")
 
 	err := s.validator.Struct(&req)
-
 	if err != nil {
-		log.Printf("CreateMember: validation failed: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "Register",
+			"email":    req.Email,
+		}).WithError(err).Warn("Request validation failed")
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
 		return
 	}
-
-	log.Println("CreateMember: validation passed") // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "Register",
+		"email":    req.Email,
+	}).Info("Request validation passed")
 
 	member, err := s.MemberService.CreateMember(r.Context(), &req)
-
 	if err != nil {
-		log.Printf("CreateMember: service error: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "Register",
+			"email":    req.Email,
+		}).WithError(err).Error("Service error during member creation")
 		response := dto.WebResponse{
 			Code:   http.StatusInternalServerError,
 			Status: err.Error(),
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
 		return
 	}
-
-	log.Printf("CreateMember: member created: %+v", member) // Logging
 
 	response := dto.WebResponse{
 		Code:   http.StatusOK,
 		Status: "success",
 		Result: *member,
 	}
-
 	helper.ResponseJSON(w, &response)
 
-	log.Println("CreateMember: response sent successfully")
+	s.log.WithFields(logrus.Fields{
+		"function": "Register",
+		"memberID": member.ID,
+	}).Info("Registration successful and response sent")
 }
 
 func (s *AuthController) Login(w http.ResponseWriter, r *http.Request) {
-	// 1.Extract credentials (email, password) from request body.
-	log.Println("Login Request Received")
+	s.log.WithField("function", "Login").Info("Received login request")
 
 	req := &dto.LoginRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(req); err != nil {
-		log.Printf("Cannot Parse Request, error : %+v\n", err.Error())
-
+		s.log.WithField("function", "Login").WithError(err).Warn("Failed to decode request body")
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
-		log.Printf("Send Response with code : %d, rs : %+v\n", http.StatusBadRequest, &response)
 		return
 	}
 
 	if err := s.validator.Struct(req); err != nil {
-		log.Printf("Cannot Parse Request, error : %+v\n", err.Error())
-
+		s.log.WithFields(logrus.Fields{
+			"function": "Login",
+			"email":    req.Email,
+		}).WithError(err).Warn("Request validation failed")
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "bad request",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
-		log.Printf("Send Response with code : %d, rs : %+v\n", http.StatusBadRequest, &response)
 		return
 	}
-
-	// 2. Find the user in the database by email.
+	s.log.WithFields(logrus.Fields{
+		"function": "Login",
+		"email":    req.Email,
+	}).Info("Request validation passed")
 
 	member, err := s.MemberService.GetMemberByEmail(r.Context(), req.Email)
-
 	if err != nil {
-		log.Println("Member not found")
-
+		s.log.WithFields(logrus.Fields{
+			"function": "Login",
+			"email":    req.Email,
+		}).WithError(err).Warn("Authentication failed: member not found")
 		response := dto.WebResponse{
 			Code:   http.StatusUnauthorized,
 			Status: "unauthorized",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
-		log.Printf("Send Response with code : %d, rs : %+v\n", http.StatusUnauthorized, &response)
 		return
 	}
-
-	// 4. Compare the provided password with the stored hashed password.
 
 	ok := helper.CheckPassword(member.Password, req.Password)
-
 	if !ok {
-		log.Println("wrong password")
-
+		s.log.WithFields(logrus.Fields{
+			"function": "Login",
+			"email":    req.Email,
+			"memberID": member.ID,
+		}).Warn("Authentication failed: wrong password")
 		response := dto.WebResponse{
 			Code:   http.StatusUnauthorized,
 			Status: "unauthorized",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
-		log.Printf("Send Response with code : %d, rs : %+v\n", http.StatusUnauthorized, &response)
 		return
 	}
+	s.log.WithFields(logrus.Fields{
+		"function": "Login",
+		"memberID": member.ID,
+	}).Info("Password check successful")
 
 	token, err := helper.GenerateJWTToken(member)
-
 	if err != nil {
-		log.Println("failed creating token")
-
+		s.log.WithFields(logrus.Fields{
+			"function": "Login",
+			"memberID": member.ID,
+		}).WithError(err).Error("Failed to generate JWT token")
 		response := dto.WebResponse{
 			Code:   http.StatusInternalServerError,
-			Status: "failed creating token : " + err.Error(),
+			Status: "internal server error",
 			Result: nil,
 		}
-
 		helper.ResponseJSON(w, &response)
-
-		log.Printf("Send Response with code : %d, rs : %+v\n", http.StatusUnauthorized, &response)
 		return
 	}
+	s.log.WithFields(logrus.Fields{
+		"function": "Login",
+		"memberID": member.ID,
+	}).Info("JWT token generated successfully")
 
 	result := map[string]string{
 		"id":    member.ID.String(),
@@ -200,4 +194,8 @@ func (s *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helper.ResponseJSON(w, &response)
+	s.log.WithFields(logrus.Fields{
+		"function": "Login",
+		"memberID": member.ID,
+	}).Info("Login successful and response sent")
 }

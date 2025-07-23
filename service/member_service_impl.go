@@ -4,52 +4,63 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log" // Add logging
 
 	"github.com/google/uuid"
 	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/repository"
+	"github.com/sirupsen/logrus"
 )
 
 type MemberServiceImpl struct {
 	repo repository.MemberRepository
+	log  *logrus.Logger
 }
 
-func NewMemberServiceImpl(repo repository.MemberRepository) MemberService {
-	log.Println("NewMemberServiceImpl: initializing service") // Logging
-	return &MemberServiceImpl{repo: repo}
+func NewMemberServiceImpl(repo repository.MemberRepository, log *logrus.Logger) MemberService {
+	return &MemberServiceImpl{
+		repo: repo,
+		log:  log,
+	}
 }
 
 func (s MemberServiceImpl) GetAllMembers(ctx context.Context) ([]dto.MemberResponse, error) {
-	log.Println("GetAllMembers: fetching all members") // Logging
+	s.log.WithField("function", "GetAllMembers").Info("Attempting to fetch all members")
 
 	result, err := s.repo.GetAll(ctx)
 	if err != nil {
-		log.Printf("GetAllMembers: failed to fetch members: %v", err) // Logging
+		s.log.WithField("function", "GetAllMembers").WithError(err).Error("Failed to fetch members from repository")
 		return nil, err
 	}
-	log.Printf("GetAllMembers: fetched %d members", len(*result)) // Logging
 
 	members := make([]dto.MemberResponse, 0, len(*result))
 	for _, v := range *result {
 		members = append(members, dto.ToMemberResponse(v))
 	}
-	log.Println("GetAllMembers: converted members to response DTOs") // Logging
+
+	s.log.WithFields(logrus.Fields{
+		"function": "GetAllMembers",
+		"count":    len(members),
+	}).Info("Successfully fetched and converted all members")
 
 	return members, nil
 }
 
 func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCreateRequest) (*dto.MemberResponse, error) {
-	log.Printf("CreateMember: received data: %+v", data) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "CreateMember",
+		"email":    data.Email,
+	}).Info("Attempting to create a new member")
 
 	hashedpass, err := helper.HashPassword(data.Password)
 	if err != nil {
-		log.Printf("CreateMember: failed to hash password: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "CreateMember",
+			"email":    data.Email,
+		}).WithError(err).Error("Failed to hash password")
 		return nil, errors.New("failed hashing password")
 	}
-	log.Println("CreateMember: password hashed successfully") // Logging
 
 	user := model.Member{
 		Email:         data.Email,
@@ -58,76 +69,116 @@ func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCre
 		AccountStatus: data.AccountStatus,
 		Role:          data.Role,
 	}
-	log.Printf("CreateMember: member model prepared: %+v", user) // Logging
 
 	result, err := s.repo.Create(ctx, &user)
 	if err != nil {
-		log.Printf("CreateMember: failed to create member in repository: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "CreateMember",
+			"email":    data.Email,
+		}).WithError(err).Error("Failed to create member in repository")
 		return nil, err
 	}
-	log.Printf("CreateMember: member created in repository: %+v", result) // Logging
 
 	member := dto.ToMemberResponse(*result)
-	log.Printf("CreateMember: converted to response DTO: %+v", member) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "CreateMember",
+		"memberID": member.ID,
+	}).Info("Successfully created new member")
 
 	return &member, nil
 }
 
 func (s MemberServiceImpl) UpdateMember(ctx context.Context, data *dto.MemberUpdateRequest) error {
-	log.Printf("UpdateMember: received update request: %+v", data) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "UpdateMember",
+		"memberID": data.ID,
+	}).Info("Attempting to update member")
 
 	updates := dto.StructToMap(data)
-	log.Printf("UpdateMember: converted update request to map: %+v", updates) // Logging
 
 	err := s.repo.Update(ctx, *data.ID, &updates)
 	if err != nil {
-		log.Printf("UpdateMember: failed to update member: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "UpdateMember",
+			"memberID": data.ID,
+		}).WithError(err).Error("Failed to update member in repository")
 		return fmt.Errorf("update data failed: %w", err)
 	}
 
-	log.Println("UpdateMember: member updated successfully") // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "UpdateMember",
+		"memberID": data.ID,
+	}).Info("Successfully updated member")
 	return nil
 }
 
 func (s MemberServiceImpl) GetMemberByID(ctx context.Context, id uuid.UUID) (*dto.MemberResponse, error) {
-	log.Printf("GetMemberByID: fetching member with ID: %s", id) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "GetMemberByID",
+		"memberID": id,
+	}).Info("Attempting to fetch member by ID")
 
 	data, err := s.repo.GetByID(ctx, id)
 	if err != nil {
-		log.Printf("GetMemberByID: failed to get member: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "GetMemberByID",
+			"memberID": id,
+		}).WithError(err).Error("Failed to get member from repository")
 		return nil, fmt.Errorf("failed to get record %w", err)
 	}
 
 	result := dto.ToMemberResponse(*data)
-	log.Printf("GetMemberByID: converted to response DTO: %+v", result) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "GetMemberByID",
+		"memberID": id,
+	}).Info("Successfully fetched member by ID")
 
 	return &result, nil
 }
 
 func (s MemberServiceImpl) GetMemberByEmail(ctx context.Context, email string) (*dto.MemberResponse, error) {
-	log.Printf("GetMemberByEmail: fetching member with email: %s", email) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "GetMemberByEmail",
+		"email":    email,
+	}).Info("Attempting to fetch member by email")
 
 	data, err := s.repo.GetByEmail(ctx, email)
 	if err != nil {
-		log.Printf("GetMemberByEmail: failed to get member: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "GetMemberByEmail",
+			"email":    email,
+		}).WithError(err).Error("Failed to get member from repository")
 		return nil, fmt.Errorf("failed to get record %w", err)
 	}
 
 	result := dto.ToMemberResponse(*data)
-	log.Printf("GetMemberByEmail: converted to response DTO: %+v", result) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "GetMemberByEmail",
+		"email":    email,
+		"memberID": result.ID,
+	}).Info("Successfully fetched member by email")
 
 	return &result, nil
 }
 
 func (s MemberServiceImpl) DeleteMemberByID(ctx context.Context, id uuid.UUID) error {
-	log.Printf("DeleteMemberByID: deleting member with ID: %s", id) // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "DeleteMemberByID",
+		"memberID": id,
+	}).Info("Attempting to delete member by ID")
 
 	err := s.repo.DeleteByID(ctx, id)
 	if err != nil {
-		log.Printf("DeleteMemberByID: failed to delete member: %v", err) // Logging
+		s.log.WithFields(logrus.Fields{
+			"function": "DeleteMemberByID",
+			"memberID": id,
+		}).WithError(err).Error("Failed to delete member in repository")
 		return fmt.Errorf("failed to delete record %w", err)
 	}
 
-	log.Println("DeleteMemberByID: member deleted successfully") // Logging
+	s.log.WithFields(logrus.Fields{
+		"function": "DeleteMemberByID",
+		"memberID": id,
+	}).Info("Successfully deleted member")
 	return nil
 }
