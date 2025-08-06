@@ -1,8 +1,18 @@
 package enum
 
-type Role string
+type Role int
 
 const (
-	RoleMember Role = "member"
-	RoleAdmin  Role = "admin"
+	_ Role = iota
+	RoleMember
+	RoleAdmin
 )
+
+var RoleState = map[Role]string{
+	RoleMember: "member",
+	RoleAdmin:  "admin",
+}
+
+func (s Role) String() string {
+	return RoleState[s]
+}

@@ -44,7 +44,7 @@ func main() {
 
 	validate := validator.New()
 
-	MemberHandler := controller.NewMemberController(MemberServ, validate)
+	MemberHandler := controller.NewMemberController(MemberServ, validate, log.StandardLogger())
 	AuthHandler := controller.NewAuthController(MemberServ, validate, log.StandardLogger())
 
 	router := router.NewRouter(MemberHandler, AuthHandler)

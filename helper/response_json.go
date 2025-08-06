@@ -3,6 +3,7 @@ package helper
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/nanoLeinz/librarium/model/dto"
 	log "github.com/sirupsen/logrus"
@@ -19,6 +20,11 @@ func ResponseJSON(w http.ResponseWriter, data *dto.WebResponse) {
 				"data": data,
 			},
 		).Error("error while encoding the data")
+	} else if str := strconv.Itoa(data.Code); str[:1] != "2" {
+		log.WithFields(log.Fields{
+			"responseCode":   data.Code,
+			"responseStatus": data.Status,
+		}).Info("Response sent successfully")
 	}
 
 }

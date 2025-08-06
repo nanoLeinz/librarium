@@ -72,9 +72,8 @@ func ValidateJWTToken(tokenString string) (*JWTClaims, error) {
 	})
 
 	if err != nil {
-
 		log.WithError(err).Warn("Error parsing or validating token")
-		return nil, fmt.Errorf("error parsing token: %w", err)
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(*JWTClaims)

@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/nanoLeinz/librarium/helper"
+	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/service"
 	"github.com/sirupsen/logrus"
@@ -66,17 +67,16 @@ func (s *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	}).Info("Request validation passed")
 
 	member, err := s.MemberService.CreateMember(r.Context(), &req)
+
 	if err != nil {
 		s.log.WithFields(logrus.Fields{
 			"function": "Register",
 			"email":    req.Email,
 		}).WithError(err).Error("Service error during member creation")
-		response := dto.WebResponse{
-			Code:   http.StatusInternalServerError,
-			Status: err.Error(),
-			Result: nil,
-		}
-		helper.ResponseJSON(w, &response)
+
+		response := myerror.ToWebResponse(err.(myerror.MyError))
+
+		helper.ResponseJSON(w, response)
 		return
 	}
 
@@ -133,12 +133,10 @@ func (s *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 			"function": "Login",
 			"email":    req.Email,
 		}).WithError(err).Warn("Authentication failed: member not found")
-		response := dto.WebResponse{
-			Code:   http.StatusUnauthorized,
-			Status: "unauthorized",
-			Result: nil,
-		}
-		helper.ResponseJSON(w, &response)
+
+		response := myerror.ToWebResponse(err.(myerror.MyError))
+
+		helper.ResponseJSON(w, response)
 		return
 	}
 
@@ -163,6 +161,7 @@ func (s *AuthController) Login(w http.ResponseWriter, r *http.Request) {
 	}).Info("Password check successful")
 
 	token, err := helper.GenerateJWTToken(member)
+
 	if err != nil {
 		s.log.WithFields(logrus.Fields{
 			"function": "Login",

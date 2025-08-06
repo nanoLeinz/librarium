@@ -3,14 +3,15 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/nanoLeinz/librarium/helper"
+	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/repository"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 )
 
 type MemberServiceImpl struct {
@@ -76,7 +77,21 @@ func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCre
 			"function": "CreateMember",
 			"email":    data.Email,
 		}).WithError(err).Error("Failed to create member in repository")
-		return nil, err
+
+		switch err {
+		case gorm.ErrDuplicatedKey:
+			s.log.WithFields(logrus.Fields{
+				"function": "CreateMember",
+				"email":    data.Email,
+			}).WithError(err).Error("duplicated constraints for member")
+			return nil, myerror.NewDuplicateError("member")
+		default:
+			s.log.WithFields(logrus.Fields{
+				"function": "CreateMember",
+				"email":    data.Email,
+			}).WithError(err).Error("failed to craete member")
+			return nil, myerror.InternalServerErr
+		}
 	}
 
 	member := dto.ToMemberResponse(*result)
@@ -94,15 +109,24 @@ func (s MemberServiceImpl) UpdateMember(ctx context.Context, data *dto.MemberUpd
 		"memberID": data.ID,
 	}).Info("Attempting to update member")
 
-	updates := dto.StructToMap(data)
+	updates := dto.StructToMap(*data)
 
-	err := s.repo.Update(ctx, *data.ID, &updates)
+	err := s.repo.Update(ctx, data.ID, &updates)
 	if err != nil {
 		s.log.WithFields(logrus.Fields{
 			"function": "UpdateMember",
 			"memberID": data.ID,
 		}).WithError(err).Error("Failed to update member in repository")
-		return fmt.Errorf("update data failed: %w", err)
+
+		switch err {
+		case gorm.ErrRecordNotFound:
+			s.log.WithError(err).Error("member not found")
+			return myerror.NewNotFoundError("member")
+		default:
+			s.log.WithError(err).Error(err.Error())
+			return myerror.InternalServerErr
+		}
+
 	}
 
 	s.log.WithFields(logrus.Fields{
@@ -124,7 +148,14 @@ func (s MemberServiceImpl) GetMemberByID(ctx context.Context, id uuid.UUID) (*dt
 			"function": "GetMemberByID",
 			"memberID": id,
 		}).WithError(err).Error("Failed to get member from repository")
-		return nil, fmt.Errorf("failed to get record %w", err)
+
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return nil, myerror.NewNotFoundError("member")
+		default:
+			return nil, myerror.InternalServerErr
+		}
+
 	}
 
 	result := dto.ToMemberResponse(*data)
@@ -148,7 +179,14 @@ func (s MemberServiceImpl) GetMemberByEmail(ctx context.Context, email string) (
 			"function": "GetMemberByEmail",
 			"email":    email,
 		}).WithError(err).Error("Failed to get member from repository")
-		return nil, fmt.Errorf("failed to get record %w", err)
+
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return nil, myerror.NewNotFoundError("member")
+		default:
+			return nil, myerror.InternalServerErr
+		}
+
 	}
 
 	result := dto.ToMemberResponse(*data)
@@ -173,7 +211,12 @@ func (s MemberServiceImpl) DeleteMemberByID(ctx context.Context, id uuid.UUID) e
 			"function": "DeleteMemberByID",
 			"memberID": id,
 		}).WithError(err).Error("Failed to delete member in repository")
-		return fmt.Errorf("failed to delete record %w", err)
+		switch err {
+		case gorm.ErrRecordNotFound:
+			return myerror.NewNotFoundError("member")
+		default:
+			return myerror.InternalServerErr
+		}
 	}
 
 	s.log.WithFields(logrus.Fields{

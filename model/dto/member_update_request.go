@@ -7,29 +7,23 @@ import (
 )
 
 type MemberUpdateRequest struct {
-	ID            *uuid.UUID
-	Email         *string
-	Password      *string
-	FullName      *string
-	AccountStatus *string
+	ID            uuid.UUID `json:"-"`
+	Email         string    `json:"email" validate:"omitempty,email"`
+	Password      string    `json:"password" validate:"omitempty,min=4"`
+	FullName      string    `json:"full_name" validate:"omitempty,max=50"`
+	AccountStatus string    `json:"account_status" validate:"omitempty"`
 }
 
 func StructToMap(data any) (result map[string]interface{}) {
 
-	result = make(map[string]interface{})
+	values := reflect.ValueOf(data)
 
-	val := reflect.ValueOf(data).Elem()
+	result = make(map[string]interface{}, values.NumField())
 
-	typ := val.Type()
-
-	for i := 0; i < val.NumField(); i++ {
-		field := val.Field(i)
-		types := typ.Field(i)
-
-		if !field.IsNil() {
-			result[types.Tag.Get("json")] = field.Elem().Interface()
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).CanInterface() && !values.Field(i).IsZero() {
+			result[values.Type().Field(i).Name] = values.Field(i).Interface()
 		}
-
 	}
 
 	return
