@@ -39,7 +39,6 @@ func main() {
 	helper.AutoMigrateModels(db)
 
 	MemberRepo := repository.NewMemberRepository(db, log.StandardLogger())
-
 	MemberServ := service.NewMemberServiceImpl(MemberRepo, log.StandardLogger())
 
 	validate := validator.New()
@@ -47,7 +46,17 @@ func main() {
 	MemberHandler := controller.NewMemberController(MemberServ, validate, log.StandardLogger())
 	AuthHandler := controller.NewAuthController(MemberServ, validate, log.StandardLogger())
 
-	router := router.NewRouter(MemberHandler, AuthHandler)
+	AuthorRepo := repository.NewAuthorRepositoryImpl(log.StandardLogger(), db)
+	AuthorServ := service.NewAuthorServiceImpl(log.StandardLogger(), AuthorRepo)
+	AuthorHandler := controller.NewAuthorController(AuthorServ, log.StandardLogger())
+
+	BookCopyRepo := repository.NewBookCopyRepositoryImpl(log.StandardLogger(), db)
+
+	BookRepo := repository.NewBookRepositoryImpl(log.StandardLogger(), db)
+	BookServ := service.NewBookServiceImpl(log.StandardLogger(), BookRepo, BookCopyRepo)
+	BookHandler := controller.NewBookController(BookServ, log.StandardLogger())
+
+	router := router.NewRouter(MemberHandler, AuthHandler, AuthorHandler, BookHandler)
 
 	server := http.Server{
 		Addr:         ":8890",

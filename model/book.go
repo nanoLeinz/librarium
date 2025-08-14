@@ -10,7 +10,7 @@ import (
 type Book struct {
 	ID              uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Title           string
-	ISBN            string
+	ISBN            string `gorm:"uniqueIndex"`
 	PublicationYear int
 	Genre           string
 	Author          []Author `gorm:"many2many:author_books;"`

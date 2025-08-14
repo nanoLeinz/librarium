@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/nanoLeinz/librarium/model/dto"
 )
 
@@ -13,7 +15,7 @@ type MyError struct {
 }
 
 var (
-	InternalServerErr = &MyError{
+	InternalServerErr = MyError{
 		Code:   http.StatusInternalServerError,
 		Status: "internal server error",
 	}
@@ -24,6 +26,8 @@ func (s MyError) Error() string {
 }
 
 func ToWebResponse(err MyError) *dto.WebResponse {
+
+	log.Info(err)
 	return &dto.WebResponse{
 		Code:   err.Code,
 		Status: err.Status,

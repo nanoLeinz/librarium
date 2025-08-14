@@ -9,7 +9,7 @@ import (
 
 type Member struct {
 	ID            uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Email         string
+	Email         string    `gorm:"uniqueIndex"`
 	Password      string
 	FullName      string
 	Role          string

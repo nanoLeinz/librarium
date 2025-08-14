@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model"
@@ -78,8 +79,10 @@ func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCre
 			"email":    data.Email,
 		}).WithError(err).Error("Failed to create member in repository")
 
-		switch err {
-		case gorm.ErrDuplicatedKey:
+		var pgError *pgconn.PgError
+
+		switch errors.As(err, &pgError); pgError.Code {
+		case "23505":
 			s.log.WithFields(logrus.Fields{
 				"function": "CreateMember",
 				"email":    data.Email,

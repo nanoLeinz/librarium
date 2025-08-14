@@ -1,15 +1,13 @@
 package model
 
 import (
-	"time"
-
 	"gorm.io/gorm"
 )
 
 type Author struct {
 	gorm.Model
-	Name      string
+	Name      string `gorm:"uniqueIndex"`
 	Biography string
-	BirthYear time.Time
+	BirthYear int
 	Book      []Book `gorm:"many2many:author_books;"`
 }
