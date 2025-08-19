@@ -9,7 +9,7 @@ import (
 
 type BookRepository interface {
 	Create(ctx context.Context, data *model.Book) (*model.Book, error)
-	Update(ctx context.Context, id uuid.UUID, data map[string]any) error
+	Update(ctx context.Context, data *model.Book) error
 	DeleteByID(ctx context.Context, id uuid.UUID) error
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Book, error)
 	GetByTitle(ctx context.Context, name string) (*[]model.Book, error)

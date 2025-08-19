@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model"
@@ -28,12 +29,23 @@ func NewBookServiceImpl(log *logrus.Logger, repo repository.BookRepository, copy
 	}
 }
 
+func (s *BookServiceImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
+
+	traceID := ctx.Value("traceID")
+
+	logger := s.log.WithFields(logrus.Fields{
+		"traceID":  traceID,
+		"function": function,
+	})
+
+	return logger
+}
+
 func (s *BookServiceImpl) Create(ctx context.Context, data *dto.BookRequest) (*dto.BookResponse, error) {
 
-	s.log.WithFields(logrus.Fields{
-		"function":   "BookService.Create",
-		"book title": data.Title,
-	}).Info("Starting Insert Book")
+	logger := s.logWithCtx(ctx, "BookService.Create")
+
+	logger.WithField("bookTitle", data.Title).Info("executing query")
 
 	authors := []model.Author{}
 
@@ -58,15 +70,12 @@ func (s *BookServiceImpl) Create(ctx context.Context, data *dto.BookRequest) (*d
 		Author:          authors,
 	}
 
-	s.log.WithFields(logrus.Fields{
-		"function": "BookService.Create",
-		"book":     book,
-	}).Info("Starting Insert Book")
+	logger.WithField("book", book).Info()
 
 	result, err := s.repo.Create(ctx, book)
 
 	if err != nil {
-		s.log.WithError(err).Error("failed adding book")
+		logger.WithError(err).Error("failed executing query")
 
 		var pgErr *pgconn.PgError
 
@@ -77,27 +86,55 @@ func (s *BookServiceImpl) Create(ctx context.Context, data *dto.BookRequest) (*d
 		return nil, myerror.InternalServerErr
 	}
 
+	logger.Info("executing insert book copy query")
 	if err := s.copyrepo.Create(ctx, result.ID, "available", int(data.InitialCopy)); err != nil {
-		s.log.WithError(err).Error("failed adding book copy")
-
+		logger.WithError(err).Error("failed to execute insert book copy query")
 		return nil, myerror.InternalServerErr
 	}
 
-	// s.authorrepo.
+	fetchedAuthors, err := s.authorrepo.GetByIDs(ctx, data.AuthorIds...)
 
-	response := dto.ToBookResponse(*result, authors)
+	if err != nil {
+		logger.WithError(err).Error("failed to execute get author query")
+		return nil, myerror.InternalServerErr
+	}
 
-	s.log.WithFields(logrus.Fields{
-		"function": "BookService.Create",
-		"book":     response,
-	}).Info("Successfuly Inserted Book")
+	response := dto.ToBookResponse(*result, *fetchedAuthors)
+	logger.WithField("response", response).Info("query executed successfully")
 
 	return &response, nil
 
 }
 
-// func (s *BookServiceImpl) Update(ctx context.Context, id uuid.UUID, data map[string]any) error
-// func (s *BookServiceImpl) DeleteByID(ctx context.Context, id uuid.UUID) error
-// func (s *BookServiceImpl) GetByID(ctx context.Context, id uuid.UUID) (*dto.BookResponse, error)
-// func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.BookResponse, error)
-// func (s *BookServiceImpl) GetAll(ctx context.Context) (*[]dto.BookResponse, error)
+func (s *BookServiceImpl) Update(ctx context.Context, id uuid.UUID, book *dto.BookRequest) error {
+
+	logger := s.logWithCtx(ctx, "BookService.Update").
+		WithField("book", book.Title)
+
+	logger.Info("Processing request to update member")
+
+	var data = dto.ToBookModel(id, *book)
+
+	err := s.repo.Update(ctx, &data)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to process update request")
+
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr); pgErr.Code == "23505" {
+			return myerror.NewNotFoundError("book")
+		} else {
+			return myerror.InternalServerErr
+		}
+
+	}
+	return nil
+}
+func (s *BookServiceImpl) DeleteByID(ctx context.Context, id uuid.UUID) error {
+
+	return nil
+}
+func (s *BookServiceImpl) GetByID(ctx context.Context, id uuid.UUID) (*dto.BookResponse, error)
+func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.BookResponse, error)
+func (s *BookServiceImpl) GetAll(ctx context.Context) (*[]dto.BookResponse, error)

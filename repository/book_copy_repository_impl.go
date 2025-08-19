@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -141,7 +142,7 @@ func (s *BookCopyRepositoryImpl) GetAll(ctx context.Context) (*[]model.BookCopy,
 
 	var copies []model.BookCopy
 
-	err := s.db.WithContext(ctx).Find(copies).Error
+	err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(copies).Error
 
 	if err != nil {
 		s.logWithCtx(ctx, "BookCopyRepository.GetAll").Error("failed executing get all query")

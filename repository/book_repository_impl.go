@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -40,15 +41,15 @@ func (s *BookRepositoryImpl) Create(ctx context.Context, data *model.Book) (*mod
 	return data, nil
 }
 
-func (s *BookRepositoryImpl) Update(ctx context.Context, id uuid.UUID, data map[string]any) error {
+func (s *BookRepositoryImpl) Update(ctx context.Context, data *model.Book) error {
 
 	s.log.WithFields(logrus.Fields{
 		"function": "Update",
-		"Book ID":  id.String(),
+		"Book ID":  data.ID.String(),
 		"data":     data,
 	}).Info("Updating to DB")
 
-	if err := s.db.WithContext(ctx).Model(&model.Book{}).Where("id = ?", id).Updates(data).Error; err != nil {
+	if err := s.db.WithContext(ctx).Model(&model.Book{}).Where("id = ?", data.ID).Updates(data).Error; err != nil {
 
 		s.log.WithError(err).Error("failed to update record")
 
@@ -56,7 +57,7 @@ func (s *BookRepositoryImpl) Update(ctx context.Context, id uuid.UUID, data map[
 	}
 	s.log.WithFields(logrus.Fields{
 		"function": "Update",
-		"Book ID":  id.String(),
+		"Book ID":  data.ID.String(),
 		"data":     data,
 	}).Info("Successfully Updated Book to DB")
 	return nil
@@ -134,7 +135,7 @@ func (s *BookRepositoryImpl) GetAll(ctx context.Context) (*[]model.Book, error) 
 
 	var datas = &[]model.Book{}
 
-	if err := s.db.WithContext(ctx).Find(datas).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(datas).Error; err != nil {
 		s.log.WithError(err).Error("failed fetching record")
 
 		return nil, err

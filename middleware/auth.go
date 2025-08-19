@@ -99,12 +99,21 @@ func ValidateJWT(next http.Handler) http.Handler {
 			return
 		}
 
+		type keyCon string
+
+		q := r.URL.Query()
+
+		page := q.Get("page")
+		pageSize := q.Get("page_size")
+
 		vals := map[string]any{
 			"memberID": memberID,
 			"role":     role,
 		}
 
 		ctx := context.WithValue(r.Context(), "memberDatas", vals)
+		ctx = context.WithValue(ctx, keyCon("page"), page)
+		ctx = context.WithValue(ctx, keyCon("page_size"), pageSize)
 
 		req := r.WithContext(ctx)
 

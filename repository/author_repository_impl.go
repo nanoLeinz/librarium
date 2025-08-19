@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 
 	log "github.com/sirupsen/logrus"
@@ -125,7 +126,7 @@ func (s *AuthorRepositoryImpl) GetAll(ctx context.Context) (*[]model.Author, err
 
 	authors := []model.Author{}
 
-	if err := s.db.WithContext(ctx).Find(&authors).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(&authors).Error; err != nil {
 		logger.WithError(err).Error("failed executing query")
 		return nil, err
 	} else if len(authors) == 0 {

@@ -5,6 +5,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nanoLeinz/librarium/model"
+	"gorm.io/gorm"
 )
 
 type BookRequest struct {
@@ -45,5 +46,31 @@ func ToBookResponse(book model.Book, authors []model.Author) BookResponse {
 		PublicationYear: book.PublicationYear,
 		Genre:           book.Genre,
 		Authors:         authorsSlice,
+	}
+}
+
+func ToBookModel(id uuid.UUID, data BookRequest) model.Book {
+	authors := []model.Author{}
+
+	if len(data.AuthorIds) > 0 {
+		for i := 0; i < len(data.AuthorIds); i++ {
+			author := model.Author{
+				Model: gorm.Model{
+					ID: uint(data.AuthorIds[i]),
+				},
+			}
+
+			authors = append(authors, author)
+
+		}
+	}
+
+	return model.Book{
+		ID:              id,
+		Title:           data.Title,
+		ISBN:            data.ISBN,
+		PublicationYear: data.PublicationYear,
+		Genre:           data.Genre,
+		Author:          authors,
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -126,7 +127,7 @@ func (s *MemberRepositoryImpl) GetAll(ctx context.Context) (*[]model.Member, err
 	s.log.WithField("function", "GetAll").Info("Attempting to fetch all members")
 
 	var data []model.Member
-	result := s.db.WithContext(ctx).Find(&data)
+	result := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(&data)
 
 	if result.Error != nil {
 		s.log.WithField("function", "GetAll").WithError(result.Error).Error("Failed to fetch all members")
