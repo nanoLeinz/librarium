@@ -15,4 +15,5 @@ type AuthorRepository interface {
 	Update(ctx context.Context, author model.Author) error
 	DeleteById(ctx context.Context, id uint) error
 	GetAll(ctx context.Context) (*[]model.Author, error)
+	GetAuthorsBook(ctx context.Context, author *model.Author) (*[]model.Book, error)
 }

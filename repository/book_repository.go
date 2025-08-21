@@ -14,4 +14,5 @@ type BookRepository interface {
 	GetByID(ctx context.Context, id uuid.UUID) (*model.Book, error)
 	GetByTitle(ctx context.Context, name string) (*[]model.Book, error)
 	GetAll(ctx context.Context) (*[]model.Book, error)
+	GetBooksAuthor(context.Context, *model.Book) (*[]model.Author, error)
 }

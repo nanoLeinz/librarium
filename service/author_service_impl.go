@@ -10,6 +10,12 @@ import (
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/repository"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
+)
+
+var (
+	ErrNotFoundAuthor  = myerror.NewNotFoundError("author")
+	ErrDuplicateAuthor = myerror.NewDuplicateError("author")
 )
 
 type AuthorServiceImpl struct {
@@ -24,12 +30,21 @@ func NewAuthorServiceImpl(log *log.Logger, repo repository.AuthorRepository) Aut
 	}
 }
 
+func (s *AuthorServiceImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
+	traceID := ctx.Value("traceID")
+
+	return log.WithFields(log.Fields{
+		"traceID":  traceID,
+		"function": function,
+	})
+}
+
 func (s *AuthorServiceImpl) Create(ctx context.Context, data *dto.AuthorRequest) (*dto.AuthorResponse, error) {
 
-	s.log.WithFields(log.Fields{
-		"function": "AuthorService.Create",
-		"author":   *data,
-	}).Info("receive create request from controller")
+	logger := s.logWithCtx(ctx, "AuthorService.Create").
+		WithField("authorName", data.Name)
+
+	logger.Info("receive create request from handler")
 
 	author := model.Author{
 		Name:      data.Name,
@@ -40,26 +55,66 @@ func (s *AuthorServiceImpl) Create(ctx context.Context, data *dto.AuthorRequest)
 	result, err := s.repo.Create(ctx, &author)
 
 	if err != nil {
-		s.log.WithError(err).Error("error inserting author")
+		logger.WithError(err).Error("failed to create author for repository")
 
 		var pgErr *pgconn.PgError
 
-		if errors.As(err, &pgErr); pgErr.Code == "23505" {
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
 			return nil, myerror.NewDuplicateError("author")
 		} else {
 			return nil, myerror.InternalServerErr
 		}
 	}
 
-	s.log.WithFields(log.Fields{
-		"author": *result,
-	}).Info("receive response from repository")
+	logger.WithField("authorID", result.ID).Info("receive response from repository")
 
 	response := dto.ToAuthorResponse(*result)
 
-	s.log.WithFields(log.Fields{
-		"data": response,
-	}).Info("converted to dto and send response")
+	logger.Info("converted to dto and send response to handler")
 
 	return &response, nil
 }
+
+func (s *AuthorServiceImpl) Update(ctx context.Context, id uint, data *dto.AuthorRequest) error {
+
+	logger := s.logWithCtx(ctx, "AuthorService.Create").
+		WithFields(log.Fields{
+			"authorName": data.Name,
+			"authorID":   id,
+		})
+
+	logger.Info("receive create request from controller")
+
+	author := model.Author{
+		Model:     gorm.Model{ID: id},
+		Name:      data.Name,
+		Biography: data.Biography,
+		BirthYear: data.BirthYear,
+	}
+
+	err := s.repo.Update(ctx, author)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to update author to repository")
+
+		var e *pgconn.PgError
+		if errors.As(err, &e) {
+			switch e.Code {
+			case "23505":
+				logger.WithError(myerror.NewNotFoundError("author")).Error("error converted to notfound")
+				return myerror.NewNotFoundError("author")
+			default:
+				logger.WithError(myerror.InternalServerErr).Error("error converted to internalservererror")
+				return myerror.InternalServerErr
+			}
+		}
+	}
+
+	return nil
+
+}
+
+func (s *AuthorServiceImpl) DeleteById(ctx context.Context, id uint) error
+func (s *AuthorServiceImpl) GetByIDs(ctx context.Context, ids ...uint) (*[]dto.AuthorResponse, error)
+func (s *AuthorServiceImpl) GetAll(ctx context.Context) (*[]dto.AuthorResponse, error)
+func (s *AuthorServiceImpl) GetAuthorsBook(ctx context.Context, author *dto.AuthorRequest) (*[]dto.AuthorResponse, error)

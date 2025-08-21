@@ -81,14 +81,15 @@ func (s MemberServiceImpl) CreateMember(ctx context.Context, data *dto.MemberCre
 
 		var pgError *pgconn.PgError
 
-		switch errors.As(err, &pgError); pgError.Code {
-		case "23505":
-			s.log.WithFields(logrus.Fields{
-				"function": "CreateMember",
-				"email":    data.Email,
-			}).WithError(err).Error("duplicated constraints for member")
-			return nil, myerror.NewDuplicateError("member")
-		default:
+		if errors.As(err, &pgError) {
+			if pgError.Code == "23505" {
+				s.log.WithFields(logrus.Fields{
+					"function": "CreateMember",
+					"email":    data.Email,
+				}).WithError(err).Error("duplicated constraints for member")
+				return nil, myerror.NewDuplicateError("member")
+			}
+
 			s.log.WithFields(logrus.Fields{
 				"function": "CreateMember",
 				"email":    data.Email,

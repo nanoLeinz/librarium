@@ -14,11 +14,16 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	ErrNotFound  = myerror.NewNotFoundError("book")
+	ErrDuplicate = myerror.NewDuplicateError("book")
+	ErrIntServer = myerror.InternalServerErr
+)
+
 type BookServiceImpl struct {
-	log        *logrus.Logger
-	repo       repository.BookRepository
-	copyrepo   repository.BookCopyRepository
-	authorrepo repository.AuthorRepository
+	log      *logrus.Logger
+	repo     repository.BookRepository
+	copyrepo repository.BookCopyRepository
 }
 
 func NewBookServiceImpl(log *logrus.Logger, repo repository.BookRepository, copy repository.BookCopyRepository) BookService {
@@ -79,27 +84,37 @@ func (s *BookServiceImpl) Create(ctx context.Context, data *dto.BookRequest) (*d
 
 		var pgErr *pgconn.PgError
 
-		if errors.As(err, &pgErr); pgErr.Code == "23505" {
-			return nil, myerror.NewDuplicateError("book")
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return nil, ErrDuplicate
 		}
 
-		return nil, myerror.InternalServerErr
+		return nil, ErrIntServer
 	}
 
 	logger.Info("executing insert book copy query")
 	if err := s.copyrepo.Create(ctx, result.ID, "available", int(data.InitialCopy)); err != nil {
 		logger.WithError(err).Error("failed to execute insert book copy query")
-		return nil, myerror.InternalServerErr
+		return nil, ErrIntServer
 	}
 
-	fetchedAuthors, err := s.authorrepo.GetByIDs(ctx, data.AuthorIds...)
+	fetchedAuthors, err := s.repo.GetBooksAuthor(ctx, book)
 
 	if err != nil {
 		logger.WithError(err).Error("failed to execute get author query")
-		return nil, myerror.InternalServerErr
+		return nil, ErrIntServer
 	}
 
-	response := dto.ToBookResponse(*result, *fetchedAuthors)
+	result.Author = *fetchedAuthors
+
+	// fetchedAuthors, err := s.authorrepo.GetByIDs(ctx, data.AuthorIds...)
+
+	// if err != nil {
+	// 	logger.WithError(err).Error("failed to execute get author query")
+	// 	return nil, ErrIntServer
+	// }
+
+	response := dto.ToBookResponse(*result)
+
 	logger.WithField("response", response).Info("query executed successfully")
 
 	return &response, nil
@@ -122,10 +137,10 @@ func (s *BookServiceImpl) Update(ctx context.Context, id uuid.UUID, book *dto.Bo
 
 		var pgErr *pgconn.PgError
 
-		if errors.As(err, &pgErr); pgErr.Code == "23505" {
-			return myerror.NewNotFoundError("book")
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return ErrNotFound
 		} else {
-			return myerror.InternalServerErr
+			return ErrIntServer
 		}
 
 	}
@@ -133,8 +148,120 @@ func (s *BookServiceImpl) Update(ctx context.Context, id uuid.UUID, book *dto.Bo
 }
 func (s *BookServiceImpl) DeleteByID(ctx context.Context, id uuid.UUID) error {
 
+	logger := s.logWithCtx(ctx, "BookService.DeleteByID").
+		WithField("bookID", id)
+
+	logger.Info("received request to delete book")
+
+	err := s.repo.DeleteByID(ctx, id)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to delete book from repository")
+
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return ErrNotFound
+		} else {
+			return ErrIntServer
+		}
+	}
+
+	logger.Info("successfully deleted book from repository")
 	return nil
 }
-func (s *BookServiceImpl) GetByID(ctx context.Context, id uuid.UUID) (*dto.BookResponse, error)
-func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.BookResponse, error)
-func (s *BookServiceImpl) GetAll(ctx context.Context) (*[]dto.BookResponse, error)
+
+func (s *BookServiceImpl) GetByID(ctx context.Context, id uuid.UUID) (*dto.BookResponse, error) {
+	logger := s.logWithCtx(ctx, "BookService.GetByID").
+		WithField("bookID", id)
+
+	logger.Info("received request to fetch book by id")
+
+	book, err := s.repo.GetByID(ctx, id)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to fetch book from repository")
+
+		var pgErr *pgconn.PgError
+
+		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return nil, ErrNotFound
+		} else {
+			return nil, ErrIntServer
+		}
+	}
+
+	logger.Info("successfully fetched book from repository")
+	logger.Info("fetching author")
+
+	fetchedAuthors, err := s.repo.GetBooksAuthor(ctx, book)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to execute get author query")
+		return nil, ErrIntServer
+	}
+
+	book.Author = *fetchedAuthors
+
+	bookResponse := dto.ToBookResponse(*book)
+
+	return &bookResponse, nil
+}
+func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.BookResponse, error) {
+
+	logger := s.logWithCtx(ctx, "BookService.GetByTitle").
+		WithField("bookName", name)
+
+	logger.Info("received request to fetch book by name")
+
+	result, err := s.repo.GetByTitle(ctx, name)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to fetch books from repo")
+
+		var pgError *pgconn.PgError
+
+		if errors.As(err, &pgError) && pgError.Code == "23505" {
+			return nil, ErrNotFound
+		} else {
+			return nil, ErrIntServer
+		}
+	}
+
+	response := []dto.BookResponse{}
+
+	for _, v := range *result {
+		response = append(response, dto.ToBookResponse(v))
+	}
+
+	logger.Info("successfully fetched books")
+	return &response, nil
+}
+
+func (s *BookServiceImpl) GetAll(ctx context.Context) (*[]dto.BookResponse, error) {
+
+	logger := s.logWithCtx(ctx, "BookService.GetAll")
+	logger.Info("received request to fetch all books")
+
+	result, err := s.repo.GetAll(ctx)
+	if err != nil {
+		logger.WithError(err).Error("failed to fetch books from repo")
+
+		var e *pgconn.PgError
+		if errors.As(err, &e) && e.Code == "23505" {
+			return nil, ErrNotFound
+		} else {
+			return nil, ErrIntServer
+		}
+	}
+
+	response := []dto.BookResponse{}
+
+	for _, v := range *result {
+		response = append(response, dto.ToBookResponse(v))
+	}
+
+	logger.Info("successfully fetched books")
+	return &response, nil
+
+}

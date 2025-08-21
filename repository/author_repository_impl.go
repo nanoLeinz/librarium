@@ -138,3 +138,23 @@ func (s *AuthorRepositoryImpl) GetAll(ctx context.Context) (*[]model.Author, err
 
 	return &authors, nil
 }
+
+func (s *AuthorRepositoryImpl) GetAuthorsBook(ctx context.Context, author *model.Author) (*[]model.Book, error) {
+
+	logger := s.logWithCtx(ctx, "AuthorRepository.GetAuthorsBook").
+		WithField("authorName", author.Name)
+
+	logger.Info("executing query")
+
+	books := []model.Book{}
+
+	err := s.db.WithContext(ctx).Model(author).Association("Book").Find(&books)
+
+	if err != nil {
+		logger.WithError(err).Error("failed to execute query")
+		return nil, err
+	}
+
+	logger.Info("query executed successfully")
+	return &books, nil
+}

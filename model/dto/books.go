@@ -26,11 +26,11 @@ type BookResponse struct {
 	Authors         []map[string]string `json:"authors"`
 }
 
-func ToBookResponse(book model.Book, authors []model.Author) BookResponse {
+func ToBookResponse(book model.Book) BookResponse {
 
 	var authorsSlice = []map[string]string{}
 
-	for _, v := range authors {
+	for _, v := range book.Author {
 		data := map[string]string{
 			"author_id":   strconv.FormatUint(uint64(v.ID), 10),
 			"author_name": v.Name,
