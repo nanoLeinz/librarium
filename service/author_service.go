@@ -15,5 +15,5 @@ type AuthorService interface {
 	DeleteById(ctx context.Context, id uint) error
 	GetByIDs(ctx context.Context, ids ...uint) (*[]dto.AuthorResponse, error)
 	GetAll(ctx context.Context) (*[]dto.AuthorResponse, error)
-	GetAuthorsBook(ctx context.Context, author *dto.AuthorRequest) (*[]dto.AuthorResponse, error)
+	GetAuthorsBook(ctx context.Context, author *dto.AuthorRequest) (*[]dto.BookResponseShort, error)
 }

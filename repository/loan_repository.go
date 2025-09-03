@@ -13,6 +13,6 @@ type LoanRepository interface {
 	Create(ctx context.Context, loan *model.Loan) (*model.Loan, error)
 	Update(ctx context.Context, loan *model.Loan) error
 	DeleteByID(ctx context.Context, loanID uuid.UUID) error
-	GetByID(ctx context.Context, loanIDs []uuid.UUID) (*[]model.Loan, error)
+	GetByID(ctx context.Context, loanIDs uuid.UUID) (*model.Loan, error)
 	GetAll(ctx context.Context) (*[]model.Loan, error)
 }

@@ -26,6 +26,14 @@ type BookResponse struct {
 	Authors         []map[string]string `json:"authors"`
 }
 
+type BookResponseShort struct {
+	ID              uuid.UUID `json:"id"`
+	Title           string    `json:"title"`
+	ISBN            string    `json:"isbn"`
+	PublicationYear int       `json:"publication_year"`
+	Genre           string    `json:"genre"`
+}
+
 func ToBookResponse(book model.Book) BookResponse {
 
 	var authorsSlice = []map[string]string{}
@@ -72,5 +80,15 @@ func ToBookModel(id uuid.UUID, data BookRequest) model.Book {
 		PublicationYear: data.PublicationYear,
 		Genre:           data.Genre,
 		Author:          authors,
+	}
+}
+
+func ToBookResponseShort(book model.Book) BookResponseShort {
+	return BookResponseShort{
+		ID:              book.ID,
+		Title:           book.Title,
+		ISBN:            book.ISBN,
+		PublicationYear: book.PublicationYear,
+		Genre:           book.Genre,
 	}
 }

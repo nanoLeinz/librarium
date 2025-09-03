@@ -56,7 +56,7 @@ func (s *AuthorRepositoryImpl) Create(ctx context.Context, author *model.Author)
 	return author, nil
 }
 
-func (s *AuthorRepositoryImpl) GetByIDs(ctx context.Context, ids ...int) (*[]model.Author, error) {
+func (s *AuthorRepositoryImpl) GetByIDs(ctx context.Context, ids ...uint) (*[]model.Author, error) {
 
 	logger := s.logWithCtx(ctx, "AuthorRepository.GetByIDs").
 		WithField("id(s)", ids)

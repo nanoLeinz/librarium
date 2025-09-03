@@ -138,6 +138,8 @@ func (s *BookServiceImpl) Update(ctx context.Context, id uuid.UUID, book *dto.Bo
 		var pgErr *pgconn.PgError
 
 		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+			return ErrDuplicate
+		} else if gorm.ErrRecordNotFound == err {
 			return ErrNotFound
 		} else {
 			return ErrIntServer
@@ -158,9 +160,7 @@ func (s *BookServiceImpl) DeleteByID(ctx context.Context, id uuid.UUID) error {
 	if err != nil {
 		logger.WithError(err).Error("failed to delete book from repository")
 
-		var pgErr *pgconn.PgError
-
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+		if gorm.ErrRecordNotFound == err {
 			return ErrNotFound
 		} else {
 			return ErrIntServer
@@ -182,9 +182,7 @@ func (s *BookServiceImpl) GetByID(ctx context.Context, id uuid.UUID) (*dto.BookR
 	if err != nil {
 		logger.WithError(err).Error("failed to fetch book from repository")
 
-		var pgErr *pgconn.PgError
-
-		if errors.As(err, &pgErr) && pgErr.Code == "23505" {
+		if gorm.ErrRecordNotFound == err {
 			return nil, ErrNotFound
 		} else {
 			return nil, ErrIntServer
@@ -219,9 +217,7 @@ func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.B
 	if err != nil {
 		logger.WithError(err).Error("failed to fetch books from repo")
 
-		var pgError *pgconn.PgError
-
-		if errors.As(err, &pgError) && pgError.Code == "23505" {
+		if gorm.ErrRecordNotFound == err {
 			return nil, ErrNotFound
 		} else {
 			return nil, ErrIntServer
@@ -247,8 +243,7 @@ func (s *BookServiceImpl) GetAll(ctx context.Context) (*[]dto.BookResponse, erro
 	if err != nil {
 		logger.WithError(err).Error("failed to fetch books from repo")
 
-		var e *pgconn.PgError
-		if errors.As(err, &e) && e.Code == "23505" {
+		if gorm.ErrRecordNotFound == err {
 			return nil, ErrNotFound
 		} else {
 			return nil, ErrIntServer

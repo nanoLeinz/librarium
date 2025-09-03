@@ -124,7 +124,7 @@ func (s *BookRepositoryImpl) GetByTitle(ctx context.Context, name string) (*[]mo
 
 	var datas = &[]model.Book{}
 
-	if err := s.db.WithContext(ctx).Where("title LIKE '%?%'", name).Find(datas).Error; err != nil {
+	if err := s.db.WithContext(ctx).Where("title LIKE ?", "%"+name+"%").Find(datas).Error; err != nil {
 		s.log.WithError(err).Error("failed fetching record")
 
 		return nil, err

@@ -28,6 +28,7 @@ func (s MyError) Error() string {
 func ToWebResponse(err MyError) *dto.WebResponse {
 
 	log.Info(err)
+
 	return &dto.WebResponse{
 		Code:   err.Code,
 		Status: err.Status,
@@ -46,5 +47,12 @@ func NewDuplicateError(entity string) MyError {
 	return MyError{
 		Code:   http.StatusConflict,
 		Status: fmt.Sprintf("%s already exist", entity),
+	}
+}
+
+func NewBadRequestError(Status string) MyError {
+	return MyError{
+		Code:   http.StatusBadRequest,
+		Status: Status,
 	}
 }

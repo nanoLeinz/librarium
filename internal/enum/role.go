@@ -8,11 +8,11 @@ const (
 	RoleAdmin
 )
 
-var RoleState = map[Role]string{
+var roleState = map[Role]string{
 	RoleMember: "member",
 	RoleAdmin:  "admin",
 }
 
 func (s Role) String() string {
-	return RoleState[s]
+	return roleState[s]
 }

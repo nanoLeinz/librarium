@@ -5,7 +5,6 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nanoLeinz/librarium/helper"
-	"github.com/nanoLeinz/librarium/internal/enum"
 	"github.com/nanoLeinz/librarium/model/dto"
 	log "github.com/sirupsen/logrus"
 
@@ -76,28 +75,28 @@ func ValidateJWT(next http.Handler) http.Handler {
 			return
 		}
 
-		var ok bool
+		// var ok bool
 
-		for _, v := range enum.RoleState {
-			if role == v {
-				ok = true
-				break
-			}
+		// for _, v := range enum.RoleState {
+		// 	if role == v {
+		// 		ok = true
+		// 		break
+		// 	}
 
-		}
+		// }
 
-		if !ok {
-			log.Warn("Role not found")
+		// if !ok {
+		// 	log.Warn("Role not found")
 
-			response := &dto.WebResponse{
-				Code:   http.StatusBadRequest,
-				Status: "Role not found",
-				Result: nil,
-			}
+		// 	response := &dto.WebResponse{
+		// 		Code:   http.StatusBadRequest,
+		// 		Status: "Role not found",
+		// 		Result: nil,
+		// 	}
 
-			helper.ResponseJSON(w, response)
-			return
-		}
+		// 	helper.ResponseJSON(w, response)
+		// 	return
+		// }
 
 		type keyCon string
 

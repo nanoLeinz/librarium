@@ -56,8 +56,8 @@ func (s *LoanRepositoryImpl) Update(ctx context.Context, loan *model.Loan) error
 
 	logger := s.logWithCtx(ctx, "LoanRepository.Update").
 		WithFields(log.Fields{
-			"memberID":   loan.MemberID,
-			"bookCopyID": loan.BookCopyID,
+			"loanID": loan.ID,
+			"status": loan.Status,
 		})
 
 	logger.Info("executing query")
@@ -96,18 +96,18 @@ func (s *LoanRepositoryImpl) DeleteByID(ctx context.Context, loanID uuid.UUID) e
 
 	return nil
 }
-func (s *LoanRepositoryImpl) GetByID(ctx context.Context, loanIDs []uuid.UUID) (*[]model.Loan, error) {
+func (s *LoanRepositoryImpl) GetByID(ctx context.Context, loanID uuid.UUID) (*model.Loan, error) {
 
 	logger := s.logWithCtx(ctx, "LoanRepository.loanIDs").
 		WithFields(log.Fields{
-			"loanIDs": loanIDs,
+			"loanIDs": loanID,
 		})
 
 	logger.Info("executing query")
 
-	var loans = []model.Loan{}
+	var loans = model.Loan{}
 
-	if err := s.db.WithContext(ctx).Find(&loans, loanIDs).Error; err != nil {
+	if err := s.db.WithContext(ctx).Find(&loans, loanID).Error; err != nil {
 		logger.WithError(err).Error("failed executing query")
 		return nil, err
 	}

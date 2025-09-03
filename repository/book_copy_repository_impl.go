@@ -153,3 +153,25 @@ func (s *BookCopyRepositoryImpl) GetAll(ctx context.Context) (*[]model.BookCopy,
 	s.logWithCtx(ctx, "BookCopyRepository.GetAll").Info("get all query executed successfully")
 	return nil, nil
 }
+
+func (s *BookCopyRepositoryImpl) GetByCondition(ctx context.Context, bookCopy *model.BookCopy) (*[]model.BookCopy, error) {
+
+	logger := s.logWithCtx(ctx, "BookCopyRepository.GetByCondition").WithFields(log.Fields{
+		"status": bookCopy.Status,
+	})
+
+	logger.Info("executing get by condition query")
+
+	var copies []model.BookCopy
+
+	err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Where(bookCopy).Find(&copies).Error
+
+	if err != nil {
+		logger.WithError(err).Error("failed executing get by condition query")
+		return nil, err
+	}
+
+	logger.WithField("count", len(copies)).Info("get by condition query executed successfully")
+	return &copies, nil
+
+}

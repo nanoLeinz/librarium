@@ -7,13 +7,14 @@ import (
 )
 
 type AuthorRequest struct {
+	ID        uint   `json:"-"`
 	Name      string `json:"name"`
 	Biography string `json:"biography"`
 	BirthYear int    `json:"year_of_birth"`
 }
 
 type AuthorResponse struct {
-	ID        int       `json:"id"`
+	ID        uint      `json:"id"`
 	Name      string    `json:"name"`
 	Biography string    `json:"biography"`
 	BirthYear int       `json:"year_of_birth"`
@@ -27,7 +28,7 @@ type AuthorResponse struct {
 
 func ToAuthorResponse(data model.Author) AuthorResponse {
 	return AuthorResponse{
-		ID:        int(data.ID),
+		ID:        data.ID,
 		Name:      data.Name,
 		Biography: data.Biography,
 		BirthYear: data.BirthYear,

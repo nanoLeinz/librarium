@@ -10,7 +10,7 @@ import (
 type Loan struct {
 	ID         uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	MemberID   uuid.UUID
-	BookCopyID uuid.UUID
+	BookCopyID uint
 	LoanDate   time.Time
 	DueDate    time.Time
 	ReturnDate *time.Time
