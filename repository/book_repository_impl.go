@@ -25,7 +25,7 @@ func NewBookRepositoryImpl(log *logrus.Logger, db *gorm.DB) BookRepository {
 func (s *BookRepositoryImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
 	traceID := ctx.Value("traceID")
 
-	logger := logrus.WithFields(logrus.Fields{
+	logger := s.log.WithFields(logrus.Fields{
 		"traceID":  traceID,
 		"function": function,
 	})

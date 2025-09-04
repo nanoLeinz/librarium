@@ -34,7 +34,7 @@ func NewAuthorServiceImpl(log *log.Logger, repo repository.AuthorRepository) Aut
 func (s *AuthorServiceImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 	traceID := ctx.Value("traceID")
 
-	return log.WithFields(log.Fields{
+	return s.log.WithFields(log.Fields{
 		"traceID":  traceID,
 		"function": function,
 	})
