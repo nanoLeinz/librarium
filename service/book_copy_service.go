@@ -5,9 +5,11 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/nanoLeinz/librarium/model"
+	log "github.com/sirupsen/logrus"
 )
 
 type BookCopyService interface {
+	logWithCtx(ctx context.Context, function string) *log.Entry
 	Create(ctx context.Context, bookId uuid.UUID, status string, copies int) error
 	Update(ctx context.Context, bookCopy *model.BookCopy) error
 	DeleteById(ctx context.Context, bookCopyId uint) error

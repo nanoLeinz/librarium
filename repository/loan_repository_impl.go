@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/model"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -24,7 +25,7 @@ func NewLoanRepository(log *log.Logger, db *gorm.DB) LoanRepository {
 func (s *LoanRepositoryImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 
 	logger := s.log.WithFields(log.Fields{
-		"traceID":  ctx.Value("traceID").(string),
+		"traceID":  ctx.Value(helper.KeyCon("traceID")).(string),
 		"function": function,
 	})
 

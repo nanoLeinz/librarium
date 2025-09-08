@@ -6,6 +6,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/nanoLeinz/librarium/model/dto"
@@ -36,7 +37,8 @@ func NewBookServiceImpl(log *logrus.Logger, repo repository.BookRepository, copy
 
 func (s *BookServiceImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
 
-	traceID := ctx.Value("traceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	logger := s.log.WithFields(logrus.Fields{
 		"traceID":  traceID,

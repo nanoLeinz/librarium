@@ -1,0 +1,62 @@
+package dto
+
+import (
+	"reflect"
+	"time"
+
+	"github.com/google/uuid"
+	"github.com/nanoLeinz/librarium/model"
+)
+
+type MemberResponse struct {
+	ID            uuid.UUID `json:"id"`
+	Email         string    `json:"email"`
+	Password      string    `json:"-"`
+	FullName      string    `json:"full_name"`
+	Role          string    `json:"-"`
+	AccountStatus string    `json:"account_status"`
+	CreatedAt     time.Time `json:"created_at"`
+}
+type MemberUpdateRequest struct {
+	ID            uuid.UUID `json:"-"`
+	Email         string    `json:"email" validate:"omitempty,email"`
+	Password      string    `json:"password" validate:"omitempty,min=4"`
+	FullName      string    `json:"full_name" validate:"omitempty,max=50"`
+	AccountStatus string    `json:"account_status" validate:"omitempty"`
+}
+type MemberCreateRequest struct {
+	Email         string `json:"email" validate:"required,email"`
+	Password      string `json:"password" validate:"required"`
+	FullName      string `json:"fullname" validate:"required"`
+	AccountStatus string `json:"account_status"`
+	Role          string `json:"-"`
+}
+
+func StructToMap(data any) (result map[string]interface{}) {
+
+	values := reflect.ValueOf(data)
+
+	result = make(map[string]interface{}, values.NumField())
+
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).CanInterface() && !values.Field(i).IsZero() {
+			result[values.Type().Field(i).Name] = values.Field(i).Interface()
+		}
+	}
+
+	return
+
+}
+
+func ToMemberResponse(member model.Member) MemberResponse {
+	return MemberResponse{
+		ID:            member.ID,
+		Email:         member.Email,
+		FullName:      member.FullName,
+		Role:          member.Role,
+		AccountStatus: member.AccountStatus,
+		CreatedAt:     member.CreatedAt,
+		Password:      member.Password,
+	}
+
+}

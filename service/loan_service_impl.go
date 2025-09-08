@@ -3,10 +3,12 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/nanoLeinz/librarium/helper"
 	"github.com/nanoLeinz/librarium/internal/enum"
 	"github.com/nanoLeinz/librarium/internal/myerror"
 	"github.com/nanoLeinz/librarium/model"
@@ -35,7 +37,8 @@ func NewLoanServiceImpl(log *log.Logger, loanRepo repository.LoanRepository, mem
 
 func (s *LoanServiceImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
 
-	traceID := ctx.Value("traceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	logger := s.log.WithFields(logrus.Fields{
 		"traceID":  traceID,
@@ -112,12 +115,20 @@ func (s *LoanServiceImpl) Create(ctx context.Context, data *dto.LoanRequest) (*d
 func (s *LoanServiceImpl) Update(ctx context.Context, id uuid.UUID, data *dto.LoanRequest) error {
 	logger := s.logWithCtx(ctx, "LoanService.Update").
 		WithField("loanID", id)
-
 	logger.Info("received update loan request")
+
+	var status string
+	if strings.ToLower(data.Status) == enum.ReturnedLoan.String() {
+		status = enum.ReturnedLoan.String()
+	} else if strings.ToLower(data.Status) == enum.OverdueLoan.String() {
+		status = enum.OverdueLoan.String()
+	} else {
+		return myerror.NewBadRequestError("status invalid")
+	}
 
 	loan := model.Loan{
 		ID:     id,
-		Status: enum.ReturnedLoan.String(),
+		Status: status,
 	}
 
 	err := s.loanRepo.Update(ctx, &loan)

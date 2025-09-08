@@ -27,7 +27,8 @@ func NewBookController(service service.BookService, log *log.Logger) *BookContro
 
 func (s *BookController) logWithCtx(ctx context.Context, fun string) *log.Entry {
 
-	traceID := ctx.Value("traceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	return s.log.WithFields(log.Fields{
 		"traceID":  traceID,
@@ -44,7 +45,8 @@ func (s *BookController) CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	Book := &dto.BookRequest{}
 	if err := json.NewDecoder(r.Body).Decode(Book); err != nil {
-		logger.WithError(err).WithField("statusCode", http.StatusBadRequest).Error("bad request: failed to decode body")
+		logger.WithError(err).WithField("statusCode", http.StatusBadRequest).
+			Error("bad request: failed to decode body")
 		response := &dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "Bad Request",
@@ -56,7 +58,9 @@ func (s *BookController) CreateBook(w http.ResponseWriter, r *http.Request) {
 
 	result, err := s.service.Create(r.Context(), Book)
 	if err != nil {
-		logger.WithError(err).WithField("statusCode", myerror.ToWebResponse(err.(myerror.MyError)).Code).Error("failed to execute insert book")
+		logger.WithError(err).
+			WithField("statusCode", err.(myerror.MyError).Code).
+			Error("failed to execute insert book")
 		response := myerror.ToWebResponse(err.(myerror.MyError))
 		helper.ResponseJSON(w, response)
 		return
@@ -80,7 +84,10 @@ func (s *BookController) UpdateBook(w http.ResponseWriter, r *http.Request) {
 	rawID := r.PathValue("id")
 	bookID, err := uuid.Parse(rawID)
 	if err != nil {
-		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid book id")
+		logger.WithField("rawID", rawID).
+			WithError(err).
+			WithField("statusCode", http.StatusBadRequest).
+			Error("invalid book id")
 		response := dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "invalid book id",
@@ -92,7 +99,9 @@ func (s *BookController) UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 	bookReq := dto.BookRequest{}
 	if err := json.NewDecoder(r.Body).Decode(&bookReq); err != nil {
-		logger.WithError(err).WithField("statusCode", http.StatusBadRequest).Error("bad request: failed to decode body")
+		logger.WithError(err).
+			WithField("statusCode", http.StatusBadRequest).
+			Error("bad request: failed to decode body")
 		response := &dto.WebResponse{
 			Code:   http.StatusBadRequest,
 			Status: "Bad Request",
@@ -110,7 +119,9 @@ func (s *BookController) UpdateBook(w http.ResponseWriter, r *http.Request) {
 
 	err = s.service.Update(r.Context(), bookID, &bookReq)
 	if err != nil {
-		logger.WithError(err).WithField("statusCode", myerror.ToWebResponse(err.(myerror.MyError)).Code).Error("failed to update book")
+		logger.WithError(err).
+			WithField("statusCode", err.(myerror.MyError).Code).
+			Error("failed to update book")
 		response := myerror.ToWebResponse(err.(myerror.MyError))
 		helper.ResponseJSON(w, response)
 		return

@@ -28,7 +28,8 @@ func NewAuthorController(service service.AuthorService, log *log.Logger) *Author
 
 func (s *AuthorController) logWithCtx(ctx context.Context, fun string) *log.Entry {
 
-	traceID := ctx.Value("traceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	return s.log.WithFields(log.Fields{
 		"traceID":  traceID,

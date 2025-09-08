@@ -24,7 +24,8 @@ func NewAuthorRepositoryImpl(log *log.Logger, db *gorm.DB) AuthorRepository {
 
 func (s *AuthorRepositoryImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 
-	traceID := ctx.Value("TraceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	logger := s.log.WithFields(log.Fields{
 		"traceID":  traceID,

@@ -24,11 +24,12 @@ func NewBookCopyRepositoryImpl(log *log.Logger, db *gorm.DB) BookCopyRepository 
 
 func (s *BookCopyRepositoryImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 
-	traceId := ctx.Value("traceID")
+	traceID := ctx.Value(helper.KeyCon("traceID"))
+	traceID = traceID.(string)
 
 	logging := s.log.WithFields(log.Fields{
 		"function": function,
-		"traceID":  traceId,
+		"traceID":  traceID,
 	})
 
 	return logging
