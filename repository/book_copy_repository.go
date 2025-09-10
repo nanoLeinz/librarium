@@ -13,4 +13,5 @@ type BookCopyRepository interface {
 	DeleteById(ctx context.Context, bookCopyId uint) error
 	GetByID(ctx context.Context, bookCopyId uint) (*model.BookCopy, error)
 	GetAll(ctx context.Context) (*[]model.BookCopy, error)
+	GetByCondition(ctx context.Context, bookCopy *model.BookCopy) (*[]model.BookCopy, error)
 }
