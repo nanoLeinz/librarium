@@ -77,7 +77,7 @@ func (s *AuthorRepositoryImpl) GetByIDs(ctx context.Context, ids ...uint) (*[]mo
 	}
 
 	logger.WithField("data", authors).
-		Info("successfulyy executing query")
+		Info("successfully executing query")
 
 	return &authors, nil
 }

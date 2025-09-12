@@ -9,6 +9,7 @@ type BookCopyRequest struct {
 }
 
 type BookCopyResponse struct {
-	ID     uint   `json:"id"`
-	Status string `json:"status"`
+	ID     uint      `json:"id"`
+	Status string    `json:"status"`
+	BookID uuid.UUID `json:"book_id"`
 }

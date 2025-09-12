@@ -11,18 +11,19 @@ import (
 )
 
 func GenerateTraceID(next http.Handler) http.Handler {
-	log.Info("generating traceID")
-
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	traceID := make([]byte, 6)
-	for i := range traceID {
-		traceID[i] = charset[r.Intn(len(charset))]
-	}
-
-	log.WithField("traceID", traceID).Info("traceID generated")
-
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Info("generating traceID")
+
+		const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		ran := rand.New(rand.NewSource(time.Now().UnixNano()))
+		trace := make([]byte, 6)
+		for i := range trace {
+			trace[i] = charset[ran.Intn(len(charset))]
+		}
+
+		traceID := string(trace)
+
+		log.WithField("traceID", string(traceID)).Info("traceID generated")
 		log.WithField("traceID", traceID).Info("adding traceID to contect")
 
 		ctx := context.WithValue(r.Context(), helper.KeyCon("traceID"), traceID)
