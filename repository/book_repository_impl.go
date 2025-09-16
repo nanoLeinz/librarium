@@ -125,11 +125,9 @@ func (s *BookRepositoryImpl) GetByTitle(ctx context.Context, name string) (*[]mo
 
 	var datas = &[]model.Book{}
 
-	if err := s.db.WithContext(ctx).Where("title LIKE ?", "%"+name+"%").Find(datas).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Where("title LIKE ?", "%"+name+"%").Preload("Author").Find(datas).Error; err != nil {
 		s.log.WithError(err).Error("failed fetching record")
-
 		return nil, err
-
 	}
 
 	s.log.WithFields(logrus.Fields{
@@ -146,7 +144,7 @@ func (s *BookRepositoryImpl) GetAll(ctx context.Context) (*[]model.Book, error) 
 
 	var datas = &[]model.Book{}
 
-	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(datas).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Preload("Author").Find(datas).Error; err != nil {
 		s.log.WithError(err).Error("failed fetching record")
 
 		return nil, err

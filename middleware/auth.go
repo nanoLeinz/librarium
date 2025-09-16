@@ -75,44 +75,12 @@ func ValidateJWT(next http.Handler) http.Handler {
 			return
 		}
 
-		// var ok bool
-
-		// for _, v := range enum.RoleState {
-		// 	if role == v {
-		// 		ok = true
-		// 		break
-		// 	}
-
-		// }
-
-		// if !ok {
-		// 	log.Warn("Role not found")
-
-		// 	response := &dto.WebResponse{
-		// 		Code:   http.StatusBadRequest,
-		// 		Status: "Role not found",
-		// 		Result: nil,
-		// 	}
-
-		// 	helper.ResponseJSON(w, response)
-		// 	return
-		// }
-
-		type keyCon string
-
-		q := r.URL.Query()
-
-		page := q.Get("page")
-		pageSize := q.Get("page_size")
-
 		vals := map[string]any{
 			"memberID": memberID,
 			"role":     role,
 		}
 
 		ctx := context.WithValue(r.Context(), "memberDatas", vals)
-		ctx = context.WithValue(ctx, keyCon("page"), page)
-		ctx = context.WithValue(ctx, keyCon("page_size"), pageSize)
 
 		req := r.WithContext(ctx)
 

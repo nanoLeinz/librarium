@@ -13,6 +13,12 @@ type LoanRequest struct {
 	Status     string    `json:"status"`
 }
 
+type LoanUpdateRequest struct {
+	Status     string `json:"status"`
+	BookCopyID uint   `json:"book_copy_id"`
+	BookStatus string `json:"book_status"`
+}
+
 type LoanResponse struct {
 	ID         uuid.UUID `json:"id"`
 	MemberID   uuid.UUID `json:"member_id"`

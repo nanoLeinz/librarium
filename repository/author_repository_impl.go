@@ -66,14 +66,14 @@ func (s *AuthorRepositoryImpl) GetByIDs(ctx context.Context, ids ...uint) (*[]mo
 
 	authors := []model.Author{}
 
-	result := s.db.WithContext(ctx).Find(authors, ids)
+	result := s.db.WithContext(ctx).Preload("Book").Find(&authors, ids)
 
 	if result.Error != nil {
 		logger.WithError(result.Error).Error("failed executing query")
 		return nil, result.Error
 	} else if len(authors) == 0 {
 		logger.Debug("no record fetched")
-		return nil, nil
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	logger.WithField("data", authors).
@@ -127,7 +127,7 @@ func (s *AuthorRepositoryImpl) GetAll(ctx context.Context) (*[]model.Author, err
 
 	authors := []model.Author{}
 
-	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(&authors).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Preload("Book").Find(&authors).Error; err != nil {
 		logger.WithError(err).Error("failed executing query")
 		return nil, err
 	} else if len(authors) == 0 {

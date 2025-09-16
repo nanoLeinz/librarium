@@ -81,7 +81,7 @@ func (s *LoanController) CreateLoan(w http.ResponseWriter, r *http.Request) {
 func (s *LoanController) UpdateLoan(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "LoanController.UpdateLoan")
 
-	rawID := r.URL.Query().Get("id")
+	rawID := r.PathValue("id")
 	loanID, err := uuid.Parse(rawID)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid loan id")
@@ -94,7 +94,7 @@ func (s *LoanController) UpdateLoan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rawReq := dto.LoanRequest{}
+	rawReq := dto.LoanUpdateRequest{}
 	err = json.NewDecoder(r.Body).Decode(&rawReq)
 	if err != nil {
 		logger.WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid request: failed to decode body")
@@ -135,7 +135,7 @@ func (s *LoanController) UpdateLoan(w http.ResponseWriter, r *http.Request) {
 func (s *LoanController) DeleteLoan(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "LoanController.DeleteLoan")
 
-	rawID := r.URL.Query().Get("id")
+	rawID := r.PathValue("id")
 	loanID, err := uuid.Parse(rawID)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid loan id")
@@ -176,7 +176,7 @@ func (s *LoanController) DeleteLoan(w http.ResponseWriter, r *http.Request) {
 func (s *LoanController) GetLoanByID(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "LoanController.GetLoanByID")
 
-	rawID := r.URL.Query().Get("id")
+	rawID := r.PathValue("id")
 	loanID, err := uuid.Parse(rawID)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid loan id")

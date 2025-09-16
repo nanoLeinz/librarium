@@ -11,6 +11,7 @@ import (
 
 func Paginator(ctx context.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
+
 		pageSize, err := strconv.Atoi(ctx.Value(KeyCon("page_size")).(string))
 
 		if err != nil || pageSize <= 0 {

@@ -107,12 +107,16 @@ func (s *LoanServiceImpl) Create(ctx context.Context, data *dto.LoanRequest) (*d
 		return nil, myerror.InternalServerErr
 	}
 
+	log.Info("updating copy status to loaned")
+	result.Status = enum.LoanedCopy.String()
+	_ = s.copyRepo.Update(ctx, result)
+
 	logger.WithField("loanID", query.ID).Info("loan created successfully")
 	response := dto.ToLoanResponse(*query)
 	return &response, nil
 }
 
-func (s *LoanServiceImpl) Update(ctx context.Context, id uuid.UUID, data *dto.LoanRequest) error {
+func (s *LoanServiceImpl) Update(ctx context.Context, id uuid.UUID, data *dto.LoanUpdateRequest) error {
 	logger := s.logWithCtx(ctx, "LoanService.Update").
 		WithField("loanID", id)
 	logger.Info("received update loan request")
@@ -141,6 +145,14 @@ func (s *LoanServiceImpl) Update(ctx context.Context, id uuid.UUID, data *dto.Lo
 			return myerror.InternalServerErr
 		}
 	}
+
+	log.Infof("updating copy status to %s", data.BookStatus)
+	copy := model.BookCopy{
+		Model:  gorm.Model{ID: data.BookCopyID},
+		Status: data.BookStatus,
+	}
+
+	_ = s.copyRepo.Update(ctx, &copy)
 
 	logger.Info("loan updated successfully")
 	return nil

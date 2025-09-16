@@ -44,7 +44,7 @@ func (s *AuthController) Register(w http.ResponseWriter, r *http.Request) {
 	}
 	s.log.WithField("function", "Register").Info("Request body decoded")
 
-	req.AccountStatus = "ACTIVE"
+	req.AccountStatus = "active"
 	req.Role = "member"
 
 	err := s.validator.Struct(&req)

@@ -78,6 +78,7 @@ func (s *BookCopyServiceImpl) Update(ctx context.Context, copyId uint, bookCopy 
 		Model: gorm.Model{
 			ID: copyId,
 		},
+		Status: bookCopy.Status,
 	}
 
 	err := s.copyRepo.Update(ctx, &copy)
@@ -133,6 +134,7 @@ func (s *BookCopyServiceImpl) GetByID(ctx context.Context, bookCopyId uint) (*dt
 	bookCopyRs := dto.BookCopyResponse{
 		ID:     rs.Model.ID,
 		Status: rs.Status,
+		BookID: rs.BookID,
 	}
 	logger.Info("book copy fetched successfully")
 	return &bookCopyRs, nil
@@ -157,6 +159,7 @@ func (s *BookCopyServiceImpl) GetAll(ctx context.Context) (*[]dto.BookCopyRespon
 		bookCopies = append(bookCopies, dto.BookCopyResponse{
 			ID:     v.Model.ID,
 			Status: v.Status,
+			BookID: v.BookID,
 		})
 	}
 
@@ -193,6 +196,7 @@ func (s *BookCopyServiceImpl) GetByCondition(ctx context.Context, bookCopy *dto.
 		bookCopies = append(bookCopies, dto.BookCopyResponse{
 			ID:     v.Model.ID,
 			Status: v.Status,
+			BookID: v.BookID,
 		})
 	}
 

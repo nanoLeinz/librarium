@@ -7,7 +7,7 @@ import (
 	m "github.com/nanoLeinz/librarium/middleware"
 )
 
-func NewRouter(member *controller.MemberController, auth *controller.AuthController, author *controller.AuthorController, book *controller.BookController) *http.ServeMux {
+func NewRouter(member *controller.MemberController, auth *controller.AuthController, author *controller.AuthorController, book *controller.BookController, copy *controller.BookCopyController, loan *controller.LoanController) *http.ServeMux {
 
 	subroute := http.NewServeMux()
 
@@ -16,16 +16,36 @@ func NewRouter(member *controller.MemberController, auth *controller.AuthControl
 	subroute.Handle("DELETE /me", m.GenerateTraceID(http.HandlerFunc(member.DeleteProfile)))
 	subroute.Handle("PATCH /me", m.GenerateTraceID(http.HandlerFunc(member.UpdateMember)))
 
+	//author
+	subroute.Handle("POST /author", m.GenerateTraceID(http.HandlerFunc(author.CreateAuthor)))
+	subroute.Handle("GET /author/{id}", m.GenerateTraceID(http.HandlerFunc(author.GetByID)))
+	subroute.Handle("GET /author", m.GenerateTraceID(m.Paginator(http.HandlerFunc(author.GetAllAuthor))))
+	subroute.Handle("DELETE /author/{id}", m.GenerateTraceID(http.HandlerFunc(author.DeleteByID)))
+	subroute.Handle("PATCH /author/{id}", m.GenerateTraceID(http.HandlerFunc(author.UpdateAuthor)))
+	subroute.Handle("GET /author/{id}/books", m.GenerateTraceID(http.HandlerFunc(author.GetAuthorsBook)))
+
 	//book
 	subroute.Handle("POST /book", m.GenerateTraceID(http.HandlerFunc(book.CreateBook)))
 	subroute.Handle("DELETE /book/{id}", m.GenerateTraceID(http.HandlerFunc(book.DeleteBook)))
 	subroute.Handle("PATCH /book/{id}", m.GenerateTraceID(http.HandlerFunc(book.UpdateBook)))
 	subroute.Handle("GET /book/{id}", m.GenerateTraceID(http.HandlerFunc(book.GetBook)))
 	subroute.Handle("GET /book", m.GenerateTraceID(m.Paginator(http.HandlerFunc(book.GetAll))))
-	subroute.Handle("GET /book/search", m.GenerateTraceID(http.HandlerFunc(book.GetBookByTitle)))
+	subroute.Handle("GET /book/search", m.GenerateTraceID(m.Paginator(http.HandlerFunc(book.GetBookByTitle))))
 
-	//author
-	subroute.Handle("POST /author", m.GenerateTraceID(http.HandlerFunc(author.CreateAuthor)))
+	//book copy
+	subroute.Handle("POST /book/{bookID}/copies", m.GenerateTraceID(http.HandlerFunc(copy.CreateCopies)))
+	subroute.Handle("DELETE /book/{bookID}/copies/{copyID}", m.GenerateTraceID(http.HandlerFunc(copy.DeleteCopy)))
+	subroute.Handle("PATCH /book/{bookID}/copies/{copyID}", m.GenerateTraceID(http.HandlerFunc(copy.UpdateStatus)))
+	subroute.Handle("GET /book/{bookID}/copies", m.GenerateTraceID(m.Paginator(http.HandlerFunc(copy.GetCopyByCondition))))
+	subroute.Handle("GET /book/copies", m.GenerateTraceID(m.Paginator(http.HandlerFunc(copy.GetAll))))
+	subroute.Handle("GET /book/{bookID}/copies/{copyID}", m.GenerateTraceID(http.HandlerFunc(copy.GetCopy)))
+
+	//loan
+	subroute.Handle("POST /loans", m.GenerateTraceID(http.HandlerFunc(loan.CreateLoan)))
+	subroute.Handle("DELETE /loans/{id}", m.GenerateTraceID(http.HandlerFunc(loan.DeleteLoan)))
+	subroute.Handle("PATCH /loans/{id}", m.GenerateTraceID(http.HandlerFunc(loan.UpdateLoan)))
+	subroute.Handle("GET /loans/{id}", m.GenerateTraceID(http.HandlerFunc(loan.GetLoanByID)))
+	subroute.Handle("GET /loans", m.GenerateTraceID(m.Paginator(http.HandlerFunc(loan.GetAllLoan))))
 
 	//v1 api
 	mainroute := http.NewServeMux()

@@ -52,7 +52,7 @@ func (s *BookCopyController) CreateCopies(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	rawBookID := r.URL.Query().Get("bookID")
+	rawBookID := r.PathValue("bookID")
 	bookID, err := uuid.Parse(rawBookID)
 	if err != nil {
 		logger.WithField("rawBookID", rawBookID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid book id")
@@ -97,7 +97,7 @@ func (s *BookCopyController) CreateCopies(w http.ResponseWriter, r *http.Request
 func (s *BookCopyController) UpdateStatus(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "BookCopyController.UpdateStatus")
 
-	rawID := r.URL.Query().Get("copyID")
+	rawID := r.PathValue("copyID")
 	copyID, err := strconv.ParseUint(rawID, 10, 64)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid copies")
@@ -153,7 +153,7 @@ func (s *BookCopyController) UpdateStatus(w http.ResponseWriter, r *http.Request
 func (s *BookCopyController) DeleteCopy(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "BookCopyController.DeleteCopy")
 
-	rawID := r.URL.Query().Get("copyID")
+	rawID := r.PathValue("copyID")
 	copyID, err := strconv.ParseUint(rawID, 10, 64)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid copies")
@@ -194,7 +194,7 @@ func (s *BookCopyController) DeleteCopy(w http.ResponseWriter, r *http.Request) 
 func (s *BookCopyController) GetCopy(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "BookCopyController.GetCopy")
 
-	rawID := r.URL.Query().Get("copyID")
+	rawID := r.PathValue("copyID")
 	copyID, err := strconv.ParseUint(rawID, 10, 64)
 	if err != nil {
 		logger.WithField("rawID", rawID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid copies")
@@ -259,8 +259,21 @@ func (s *BookCopyController) GetAll(w http.ResponseWriter, r *http.Request) {
 func (s *BookCopyController) GetCopyByCondition(w http.ResponseWriter, r *http.Request) {
 	logger := s.logWithCtx(r.Context(), "BookCopyController.GetCopyByCondition")
 
+	rawBookID := r.PathValue("bookID")
+	bookID, err := uuid.Parse(rawBookID)
+	if err != nil {
+		logger.WithField("rawBookID", rawBookID).WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid book id")
+		response := dto.WebResponse{
+			Code:   http.StatusBadRequest,
+			Status: "invalid book id",
+			Result: nil,
+		}
+		helper.ResponseJSON(w, &response)
+		return
+	}
+
 	req := dto.BookCopyRequest{}
-	err := json.NewDecoder(r.Body).Decode(&req)
+	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		logger.WithError(err).WithField("statusCode", http.StatusBadRequest).Error("invalid request")
 		response := dto.WebResponse{
@@ -272,6 +285,8 @@ func (s *BookCopyController) GetCopyByCondition(w http.ResponseWriter, r *http.R
 		helper.ResponseJSON(w, &response)
 		return
 	}
+
+	req.BookID = bookID
 
 	logger.WithFields(log.Fields{
 		"status":     req.Status,

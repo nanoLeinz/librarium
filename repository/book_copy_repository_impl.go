@@ -82,10 +82,10 @@ func (s *BookCopyRepositoryImpl) Update(ctx context.Context, bookCopy *model.Boo
 
 	if result.Error != nil {
 		logger.WithError(result.Error).Error("failed executing update book copy query")
-
 		return result.Error
 	} else if result.RowsAffected == 0 {
 		logger.Debug("query executed but 0 rows affected")
+		return gorm.ErrRecordNotFound
 	} else {
 		logger.Info("book copy update query executed successfully")
 	}
@@ -143,7 +143,7 @@ func (s *BookCopyRepositoryImpl) GetAll(ctx context.Context) (*[]model.BookCopy,
 
 	var copies []model.BookCopy
 
-	err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(copies).Error
+	err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(&copies).Error
 
 	if err != nil {
 		s.logWithCtx(ctx, "BookCopyRepository.GetAll").Error("failed executing get all query")
@@ -152,7 +152,7 @@ func (s *BookCopyRepositoryImpl) GetAll(ctx context.Context) (*[]model.BookCopy,
 	}
 
 	s.logWithCtx(ctx, "BookCopyRepository.GetAll").Info("get all query executed successfully")
-	return nil, nil
+	return &copies, nil
 }
 
 func (s *BookCopyRepositoryImpl) GetByCondition(ctx context.Context, bookCopy *model.BookCopy) (*[]model.BookCopy, error) {

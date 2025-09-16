@@ -218,7 +218,6 @@ func (s *BookServiceImpl) GetByTitle(ctx context.Context, name string) (*[]dto.B
 
 	if err != nil {
 		logger.WithError(err).Error("failed to fetch books from repo")
-
 		if gorm.ErrRecordNotFound == err {
 			return nil, ErrNotFound
 		} else {

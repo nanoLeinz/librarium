@@ -51,12 +51,18 @@ func main() {
 	AuthorHandler := controller.NewAuthorController(AuthorServ, log.StandardLogger())
 
 	BookCopyRepo := repository.NewBookCopyRepositoryImpl(log.StandardLogger(), db)
+	BookCopyServ := service.NewBookCopyService(log.StandardLogger(), BookCopyRepo)
+	BookCopyHandler := controller.NewBookCopyController(log.StandardLogger(), BookCopyServ)
 
 	BookRepo := repository.NewBookRepositoryImpl(log.StandardLogger(), db)
 	BookServ := service.NewBookServiceImpl(log.StandardLogger(), BookRepo, BookCopyRepo)
 	BookHandler := controller.NewBookController(BookServ, log.StandardLogger())
 
-	router := router.NewRouter(MemberHandler, AuthHandler, AuthorHandler, BookHandler)
+	LoanRepo := repository.NewLoanRepository(log.StandardLogger(), db)
+	LoanServ := service.NewLoanServiceImpl(log.StandardLogger(), LoanRepo, MemberRepo, BookCopyRepo)
+	LoanHandler := controller.NewLoanController(log.StandardLogger(), LoanServ)
+
+	router := router.NewRouter(MemberHandler, AuthHandler, AuthorHandler, BookHandler, BookCopyHandler, LoanHandler)
 
 	server := http.Server{
 		Addr:         ":8890",

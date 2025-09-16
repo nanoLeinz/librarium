@@ -107,10 +107,13 @@ func (s *LoanRepositoryImpl) GetByID(ctx context.Context, loanID uuid.UUID) (*mo
 	logger.Info("executing query")
 
 	var loans = model.Loan{}
-
-	if err := s.db.WithContext(ctx).Find(&loans, loanID).Error; err != nil {
+	q := s.db.WithContext(ctx).Find(&loans, loanID)
+	if err := q.Error; err != nil {
 		logger.WithError(err).Error("failed executing query")
 		return nil, err
+	} else if q.RowsAffected == 0 {
+		logger.WithError(gorm.ErrRecordNotFound).Error("record not found")
+		return nil, gorm.ErrRecordNotFound
 	}
 
 	logger.Info("query executed successfully")
@@ -122,7 +125,7 @@ func (s *LoanRepositoryImpl) GetAll(ctx context.Context) (*[]model.Loan, error) 
 
 	var loans = []model.Loan{}
 
-	if err := s.db.WithContext(ctx).Find(&loans).Error; err != nil {
+	if err := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Find(&loans).Error; err != nil {
 		s.logWithCtx(ctx, "LoanRepository.GetAll").
 			WithError(err).
 			Error("failed executing query")
