@@ -14,7 +14,6 @@ import (
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/repository"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -35,12 +34,12 @@ func NewLoanServiceImpl(log *log.Logger, loanRepo repository.LoanRepository, mem
 	}
 }
 
-func (s *LoanServiceImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
+func (s *LoanServiceImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 
 	traceID := ctx.Value(helper.KeyCon("traceID"))
 	traceID = traceID.(string)
 
-	logger := s.log.WithFields(logrus.Fields{
+	logger := s.log.WithFields(log.Fields{
 		"traceID":  traceID,
 		"function": function,
 	})
@@ -49,7 +48,7 @@ func (s *LoanServiceImpl) logWithCtx(ctx context.Context, function string) *logr
 }
 func (s *LoanServiceImpl) Create(ctx context.Context, data *dto.LoanRequest) (*dto.LoanResponse, error) {
 	logger := s.logWithCtx(ctx, "LoanService.Create").
-		WithFields(logrus.Fields{
+		WithFields(log.Fields{
 			"memberID":   data.MemberID,
 			"bookCopyID": data.BookCopyID,
 		})
