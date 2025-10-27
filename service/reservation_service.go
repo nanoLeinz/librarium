@@ -13,6 +13,6 @@ type ReservationService interface {
 	Create(ctx context.Context, data *dto.ReservationRequest) (*dto.ReservationResponse, error)
 	Update(ctx context.Context, id uuid.UUID, data *dto.ReservationRequest) error
 	DeleteById(ctx context.Context, id uuid.UUID) error
-	GetByID(ctx context.Context, id uuid.UUID) (*[]dto.ReservationResponse, error)
-	GetAll(ctx context.Context) (*[]dto.ReservationResponse, error)
+	GetByID(ctx context.Context, id uuid.UUID) (*dto.ReservationResponse, error)
+	GetAll(ctx context.Context) ([]dto.ReservationResponse, error)
 }

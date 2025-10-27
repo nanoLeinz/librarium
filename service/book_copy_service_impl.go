@@ -9,7 +9,6 @@ import (
 	"github.com/nanoLeinz/librarium/model"
 	"github.com/nanoLeinz/librarium/model/dto"
 	"github.com/nanoLeinz/librarium/repository"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 )
@@ -31,7 +30,7 @@ func NewBookCopyService(log *log.Logger, copyRepo repository.BookCopyRepository)
 	}
 }
 
-func (s *BookCopyServiceImpl) logWithCtx(ctx context.Context, function string) *logrus.Entry {
+func (s *BookCopyServiceImpl) logWithCtx(ctx context.Context, function string) *log.Entry {
 
 	traceID := ctx.Value(helper.KeyCon("traceID"))
 	traceID = traceID.(string)

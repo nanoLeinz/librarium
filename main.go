@@ -62,7 +62,11 @@ func main() {
 	LoanServ := service.NewLoanServiceImpl(log.StandardLogger(), LoanRepo, MemberRepo, BookCopyRepo)
 	LoanHandler := controller.NewLoanController(log.StandardLogger(), LoanServ)
 
-	router := router.NewRouter(MemberHandler, AuthHandler, AuthorHandler, BookHandler, BookCopyHandler, LoanHandler)
+	ReservRepo := repository.NewReservationRepository(log.StandardLogger(), db)
+	ReservServ := service.NewReservationService(log.StandardLogger(), ReservRepo, MemberRepo)
+	ReservHandler := controller.NewReservationController(log.StandardLogger(), ReservServ)
+
+	router := router.NewRouter(MemberHandler, AuthHandler, AuthorHandler, BookHandler, BookCopyHandler, LoanHandler, ReservHandler)
 
 	server := http.Server{
 		Addr:         ":8890",

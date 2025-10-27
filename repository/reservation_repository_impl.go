@@ -17,7 +17,7 @@ type ReservationRepositoryImpl struct {
 	log *log.Logger
 }
 
-func NewReservationRepository(db *gorm.DB, log *log.Logger) ReservationRepository {
+func NewReservationRepository(log *log.Logger, db *gorm.DB) ReservationRepository {
 	return &ReservationRepositoryImpl{
 		db:  db,
 		log: log,
@@ -75,7 +75,7 @@ func (s *ReservationRepositoryImpl) GetByID(ctx context.Context, id uuid.UUID) (
 	logger.Info("executing get reservation by ID query")
 
 	resv := model.Reservation{}
-	result := s.db.WithContext(ctx).Raw("SELECT * FROM reservations WHERE id = ?", id).Scan(&resv)
+	result := s.db.WithContext(ctx).Raw("SELECT * FROM reservations WHERE id = ? and deleted_at IS NULL", id).Scan(&resv)
 	if result.Error != nil {
 		logger.WithError(result.Error).Error("failed to get reservation by ID")
 		return nil, result.Error
@@ -95,10 +95,9 @@ func (s *ReservationRepositoryImpl) Update(ctx context.Context, reservation mode
 	logger.Info("executing reservation update query")
 
 	result := s.db.WithContext(ctx).
-		Exec("UPDATE reservations SET status = ?, queue_position = ?, updated_at = ? WHERE id = ? ",
+		Exec("UPDATE reservations SET status = ?, updated_at = ? WHERE id = ? and deleted_at IS NULL",
 			reservation.Status,
-			reservation.QueuePosition,
-			time.Now().Local(),
+			reservation.UpdatedAt,
 			reservation.ID)
 
 	if result.Error != nil {
@@ -106,6 +105,7 @@ func (s *ReservationRepositoryImpl) Update(ctx context.Context, reservation mode
 		return result.Error
 	} else if result.RowsAffected < 1 {
 		logger.Warn("reservation update query executed but no rows affected")
+		return gorm.ErrRecordNotFound
 	} else {
 		logger.Info("reservation updated successfully")
 	}
@@ -141,7 +141,7 @@ func (s *ReservationRepositoryImpl) GetAll(ctx context.Context) ([]model.Reserva
 	logger.Info("executing get all reservations query")
 
 	resv := []model.Reservation{}
-	result := s.db.WithContext(ctx).Raw("SELECT * FROM reservations").Scan(&resv)
+	result := s.db.WithContext(ctx).Scopes(helper.Paginator(ctx)).Raw("SELECT * FROM reservations WHERE deleted_at IS NULL").Scan(&resv)
 	if result.Error != nil {
 		logger.WithError(result.Error).Error("failed to get all reservations")
 		return nil, result.Error
@@ -162,7 +162,7 @@ func (s *ReservationRepositoryImpl) GetLastQueue(ctx context.Context, bookID uui
 
 	var last int
 	result := s.db.WithContext(ctx).
-		Raw("SELECT COALESCE(MAX(queue_position), 0) FROM reservations WHERE book_id = ?", bookID.String()).
+		Raw("SELECT COALESCE(MAX(queue_position), 0) FROM reservations WHERE book_id = ? and deleted_at IS NULL", bookID.String()).
 		Scan(&last)
 
 	if result.Error != nil {
@@ -181,9 +181,19 @@ func (s *ReservationRepositoryImpl) UpdateRelatedQueue(ctx context.Context, book
 	logger.Info("executing update related queue query")
 
 	result := s.db.WithContext(ctx).
-		Exec("UPDATE reservations SET queue_position = queue_position - 1, update_at = ? WHERE book_id = ? and status != ?",
+		Exec(`With target as MATERIALIZED (
+		SELECT book_id, queue_position FROM reservations
+		WHERE id = ?)
+		UPDATE reservations AS r
+		SET queue_position = r.queue_position - 1,
+			updated_at = ?
+		FROM target AS t
+		WHERE r.book_id = t.book_id
+		AND r.queue_position > t.queue_position
+		AND r.status = ?
+		AND r.deleted_at IS NULL`,
+			bookID,
 			time.Now().Local(),
-			bookID.String(),
 			enum.PendingReserv.String(),
 		)
 

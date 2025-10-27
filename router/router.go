@@ -7,7 +7,14 @@ import (
 	m "github.com/nanoLeinz/librarium/middleware"
 )
 
-func NewRouter(member *controller.MemberController, auth *controller.AuthController, author *controller.AuthorController, book *controller.BookController, copy *controller.BookCopyController, loan *controller.LoanController) *http.ServeMux {
+func NewRouter(member *controller.MemberController,
+	auth *controller.AuthController,
+	author *controller.AuthorController,
+	book *controller.BookController,
+	copy *controller.BookCopyController,
+	loan *controller.LoanController,
+	reservation *controller.ReservationController,
+) *http.ServeMux {
 
 	subroute := http.NewServeMux()
 
@@ -46,6 +53,13 @@ func NewRouter(member *controller.MemberController, auth *controller.AuthControl
 	subroute.Handle("PATCH /loans/{id}", m.GenerateTraceID(http.HandlerFunc(loan.UpdateLoan)))
 	subroute.Handle("GET /loans/{id}", m.GenerateTraceID(http.HandlerFunc(loan.GetLoanByID)))
 	subroute.Handle("GET /loans", m.GenerateTraceID(m.Paginator(http.HandlerFunc(loan.GetAllLoan))))
+
+	//reservation
+	subroute.Handle("POST /reservation", m.GenerateTraceID(http.HandlerFunc(reservation.CreateReservation)))
+	subroute.Handle("DELETE /reservation/{id}", m.GenerateTraceID(http.HandlerFunc(reservation.DeleteReservation)))
+	subroute.Handle("PATCH /reservation/{id}", m.GenerateTraceID(http.HandlerFunc(reservation.UpdateReservation)))
+	subroute.Handle("GET /reservation/{id}", m.GenerateTraceID(http.HandlerFunc(reservation.GetReservationByID)))
+	subroute.Handle("GET /reservation", m.GenerateTraceID(m.Paginator(http.HandlerFunc(reservation.GetAllReservation))))
 
 	//v1 api
 	mainroute := http.NewServeMux()
