@@ -6,7 +6,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/nanoLeinz/librarium/model/dto"
+	"github.com/nanoLeinz/librarium/internal/model/dto"
 )
 
 type MyError struct {

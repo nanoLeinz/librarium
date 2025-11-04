@@ -10,11 +10,11 @@ import (
 
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
-	"github.com/nanoLeinz/librarium/controller"
-	"github.com/nanoLeinz/librarium/helper"
-	"github.com/nanoLeinz/librarium/repository"
-	"github.com/nanoLeinz/librarium/router"
-	"github.com/nanoLeinz/librarium/service"
+	"github.com/nanoLeinz/librarium/internal/controller"
+	"github.com/nanoLeinz/librarium/internal/helper"
+	"github.com/nanoLeinz/librarium/internal/repository"
+	"github.com/nanoLeinz/librarium/internal/router"
+	"github.com/nanoLeinz/librarium/internal/service"
 )
 
 func init() {

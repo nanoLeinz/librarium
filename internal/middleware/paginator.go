@@ -1,0 +1,23 @@
+package middleware
+
+import (
+	"context"
+	"net/http"
+
+	"github.com/nanoLeinz/librarium/internal/helper"
+)
+
+func Paginator(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		q := r.URL.Query()
+		page := q.Get("page")
+		pageSize := q.Get("page_size")
+
+		ctx := context.WithValue(r.Context(), helper.KeyCon("page"), page)
+		ctx = context.WithValue(ctx, helper.KeyCon("page_size"), pageSize)
+		newRq := r.WithContext(ctx)
+
+		next.ServeHTTP(w, newRq)
+	})
+}
